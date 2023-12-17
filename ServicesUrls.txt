@@ -15,11 +15,11 @@ NotificationService			-> Console App
 
 
 
-----Servisler----
--User
--Intern
--File
--Image
--survey
+----Servisler----          ---VeriTabanlarý---
+-User                      ---MsSql---
+-Intern					   ---MsSql---
+-File					   ---Redis---
+-Image					   ---MongonDB---
+-survey					   ---MsSql---
 -Identity
 -Notification

@@ -5,7 +5,7 @@
 namespace UserService.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class mig0 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace UserService.Api.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TCNO = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gernder = table.Column<bool>(type: "bit", nullable: false),
+                    Gender = table.Column<bool>(type: "bit", nullable: false),
                     Mail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RePassword = table.Column<string>(type: "nvarchar(max)", nullable: false),

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UserService.Api.Context;
 using UserService.Api.Manager;
 using UserService.Api.Model;
 using X.PagedList;
-using static System.Net.Mime.MediaTypeNames;
+
 
 namespace UserService.Api.Controllers
 {

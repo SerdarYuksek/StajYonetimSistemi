@@ -11,8 +11,8 @@ using UserService.Api.Context;
 namespace UserService.Api.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20231212183948_mig1")]
-    partial class mig1
+    [Migration("20231217133501_mig0")]
+    partial class mig0
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace UserService.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Gernder")
+                    b.Property<bool>("Gender")
                         .HasColumnType("bit");
 
                     b.Property<string>("Mail")

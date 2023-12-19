@@ -2,6 +2,7 @@
 
 namespace InternService.Api.Model
 {
+    //Intern Servicesindeki InternInfo Tablosunun Entityleri
     public class InternInfo
     {
         [Key]

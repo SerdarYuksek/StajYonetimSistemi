@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserService.Api.Context;
 using UserService.Api.Manager;
 using UserService.Api.Model;
 using X.PagedList;
@@ -10,9 +11,20 @@ namespace UserService.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 
+        private UserDbContext dbContext;
         private CrudGenericRepository<Student> sgr;
         private CrudGenericRepository<Personal> pgr;
 
+        //User Controllerın Contructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
+        public UserController(UserDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+            sgr = new CrudGenericRepository<Student>(dbContext);
+            pgr = new CrudGenericRepository<Personal>(dbContext);
+        }
+
+        [HttpGet("UserList")]
         //Rol Bilgisine Göre Kullanıcıların Listelenmesi
         public IActionResult UserList(string role, int page = 1)
         {
@@ -34,20 +46,21 @@ namespace UserService.Api.Controllers
 
         }
 
+        [HttpDelete("UserDel")]
         //Rol Bilgisine Göre Kullanıcıların Silinmesi
-        public IActionResult UserDel(string role, int ıd)
+        public IActionResult UserDel(string role, int id)
         {
             // Rolü Personal Olan Kullanıcının Silinmesi
             if (role == "Personal")
             {
-                var personalId = pgr.UGetById(ıd);
+                var personalId = pgr.UGetById(id);
                 pgr.UDelete(personalId);
                 return Ok(new { Message = "Kişi başarıyla silindi." });
             }
             // Rolü Student Olan Kullanıcının Silinmesi
             else if (role == "Student")
             {
-                var StudentId = sgr.UGetById(ıd);
+                var StudentId = sgr.UGetById(id);
                 sgr.UDelete(StudentId);
                 return Ok(new { Message = "Kişi başarıyla silindi." });
             }
@@ -56,8 +69,7 @@ namespace UserService.Api.Controllers
 
         }
 
-
-        [HttpGet]
+        [HttpGet("UserUpdate")]
         //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
         public IActionResult UserUpdate(string role, int id)
         {
@@ -77,38 +89,38 @@ namespace UserService.Api.Controllers
             return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
         }
 
-        [HttpPost]
+        [HttpPut("UserUpdate")]
         //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
-        public IActionResult UserUpdate(string role, Personal p, Student s)
+        public IActionResult UserUpdate(string role, UserUpdate u)
         {
             // Rolü Personal ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
             if (role == "Personal")
             {
-                var x = pgr.UGetById(p.ID);
+                var x = pgr.UGetById(u.PersonalData.ID);
 
-                x.FirstName = p.FirstName;
-                x.Surname = p.Surname;
-                x.TCNO = p.TCNO;
-                x.Gender = p.Gender;
-                x.Mail = p.Mail;
-                x.PersonalNo = p.PersonalNo;
-                x.Title = p.Title;
-                
+                x.FirstName = u.PersonalData.FirstName;
+                x.Surname = u.PersonalData.Surname;
+                x.TCNO = u.PersonalData.TCNO;
+                x.Gender = u.PersonalData.Gender;
+                x.Mail = u.PersonalData.Mail;
+                x.PersonalNo = u.PersonalData.PersonalNo;
+                x.Title = u.PersonalData.Title;
+
                 pgr.UUpdate(x);
                 return Ok(new { Message = "Kişi başarıyla Güncellendi." });
             }
             // Rolü Student ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
             else if (role == "Student")
             {
-                var x = sgr.UGetById(s.ID);
+                var x = sgr.UGetById(u.StudentData.ID);
 
-                x.FirstName = s.FirstName;
-                x.Surname = s.Surname;
-                x.TCNO = s.TCNO;
-                x.Gender = s.Gender;
-                x.Class = s.Class;
-                x.Mail = p.Mail;
-                x.StudentNo = s.StudentNo;
+                x.FirstName = u.StudentData.FirstName;
+                x.Surname = u.StudentData.Surname;
+                x.TCNO = u.StudentData.TCNO;
+                x.Gender = u.StudentData.Gender;
+                x.Class = u.StudentData.Class;
+                x.Mail = u.StudentData.Mail;
+                x.StudentNo = u.StudentData.StudentNo;
 
                 sgr.UUpdate(x);
                 return Ok(new { Message = "Kişi başarıyla Güncellendi." });

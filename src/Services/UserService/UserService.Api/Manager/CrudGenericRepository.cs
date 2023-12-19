@@ -4,14 +4,15 @@ using UserService.Api.Services;
 
 namespace UserService.Api.Manager
 {
-    ////User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
+    //User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
     public class CrudGenericRepository<T> : IGenericService<T> where T : class
     {
         private UserDbContext _dbContext;
         DbSet<T> values;
 
-        public CrudGenericRepository()
+        public CrudGenericRepository(UserDbContext dbContext)
         {
+            _dbContext = dbContext;
             values = _dbContext.Set<T>();
         }
         public List<T> UGetListAll()

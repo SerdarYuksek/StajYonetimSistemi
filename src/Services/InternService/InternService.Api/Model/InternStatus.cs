@@ -1,5 +1,6 @@
 ﻿namespace InternService.Api.Model
 {
+    //Intern Servicesindeki InternStatus Tablosunun Entityleri
     public class InternStatus
     {
         public int ID { get; set; }

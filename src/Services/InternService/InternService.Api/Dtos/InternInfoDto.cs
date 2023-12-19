@@ -1,5 +1,6 @@
 ﻿namespace InternService.Api.Dtos
 {
+    //Intern Servicesinin diğer serviceler ile arasındaki haberleşmede göndereceği InternInfo entityleri
     public class InternInfoDto
     {
         public int ID { get; set; }

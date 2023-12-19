@@ -1,19 +1,23 @@
 ﻿using InternService.Api.Context;
 using InternService.Api.Model;
+using InternService.Api.Services;
 using Microsoft.EntityFrameworkCore;
-using static InternService.Api.Services.IGenericCrudInterface;
+
 
 namespace InternService.Api.Manager
 {
-    public class CrudGenericRepository<T> : IGenericService<T> where T : class
+    //User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
+    public class CrudGenericRepository<T> : IGenericCrudInterface<T> where T : class
     {
         private InternDbContext _dbContext;
         DbSet<T> values;
 
-        public CrudGenericRepository()
+        public CrudGenericRepository(InternDbContext dbContext)
         {
+            _dbContext = dbContext;
             values = _dbContext.Set<T>();
         }
+
         public void INAdd(T t)
         {
             values.Add(t);
@@ -104,7 +108,6 @@ namespace InternService.Api.Manager
             //    _dbContext.SaveChanges();
             //}
         }
-
 
         public void INUpdate(T t)
         {

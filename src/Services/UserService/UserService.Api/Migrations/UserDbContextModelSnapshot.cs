@@ -70,7 +70,7 @@ namespace UserService.Api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("personals");
+                    b.ToTable("personals", (string)null);
                 });
 
             modelBuilder.Entity("UserService.Api.Model.Student", b =>
@@ -122,7 +122,7 @@ namespace UserService.Api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("students");
+                    b.ToTable("students", (string)null);
                 });
 #pragma warning restore 612, 618
         }

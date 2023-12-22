@@ -7,10 +7,10 @@ namespace UserService.Api.Manager
     //User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
     public class CrudGenericRepository<T> : IGenericService<T> where T : class
     {
-        private UserDbContext _dbContext;
+        private UserIdentityDbContext _dbContext;
         DbSet<T> values;
 
-        public CrudGenericRepository(UserDbContext dbContext)
+        public CrudGenericRepository(UserIdentityDbContext dbContext)
         {
             _dbContext = dbContext;
             values = _dbContext.Set<T>();

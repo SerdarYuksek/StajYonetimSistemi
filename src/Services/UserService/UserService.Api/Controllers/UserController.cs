@@ -12,12 +12,12 @@ namespace UserService.Api.Controllers
     public class UserController : ControllerBase
     {
         //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 
-        private UserDbContext dbContext;
+        private UserIdentityDbContext dbContext;
         private CrudGenericRepository<Student> sgr;
         private CrudGenericRepository<Personal> pgr;
 
         //User Controllerın Contructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
-        public UserController(UserDbContext dbContext)
+        public UserController(UserIdentityDbContext dbContext)
         {
             this.dbContext = dbContext;
             sgr = new CrudGenericRepository<Student>(dbContext);
@@ -91,18 +91,19 @@ namespace UserService.Api.Controllers
 
         [HttpPut("UserUpdate")]
         //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
-        public IActionResult UserUpdate(string role, UserUpdate u)
+        public IActionResult UserUpdate(string role, AppUser u)
         {
             // Rolü Personal ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
             if (role == "Personal")
             {
-                var x = pgr.UGetById(u.PersonalData.ID);
+                var x = pgr.UGetById(u.PersonalData.Id);
 
                 x.FirstName = u.PersonalData.FirstName;
                 x.Surname = u.PersonalData.Surname;
                 x.TCNO = u.PersonalData.TCNO;
                 x.Gender = u.PersonalData.Gender;
-                x.Mail = u.PersonalData.Mail;
+                x.Email = u.PersonalData.Email;
+                x.PhoneNumber = u.PhoneNumber;
                 x.PersonalNo = u.PersonalData.PersonalNo;
                 x.Title = u.PersonalData.Title;
 
@@ -112,14 +113,15 @@ namespace UserService.Api.Controllers
             // Rolü Student ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
             else if (role == "Student")
             {
-                var x = sgr.UGetById(u.StudentData.ID);
+                var x = sgr.UGetById(u.StudentData.Id);
 
                 x.FirstName = u.StudentData.FirstName;
                 x.Surname = u.StudentData.Surname;
                 x.TCNO = u.StudentData.TCNO;
                 x.Gender = u.StudentData.Gender;
                 x.Class = u.StudentData.Class;
-                x.Mail = u.StudentData.Mail;
+                x.Email = u.StudentData.Email;
+                x.PhoneNumber = u.PhoneNumber;
                 x.StudentNo = u.StudentData.StudentNo;
 
                 sgr.UUpdate(x);

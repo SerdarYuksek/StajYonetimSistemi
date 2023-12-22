@@ -4,9 +4,9 @@ using UserService.Api.Model;
 
 namespace UserService.Api
 {
-    public class DtoMapper : Profile
+    public class NameMapper : Profile
     {
-        public DtoMapper()
+        public NameMapper()
         {
             //AutoMapper İle ad soyad bilgilerini birleştirerek Dtoya aktarıyoruz
             CreateMap<Student, IdentityUser>()

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using UserService.Api.Model;
 
-namespace IdentityService.Api.ValidationRules
+namespace UserService.Api.ValidationRules
 {
     public class UserRegisterValidation : AbstractValidator<AppUser>
     {

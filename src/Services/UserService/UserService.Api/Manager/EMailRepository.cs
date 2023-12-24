@@ -1,14 +1,15 @@
-﻿using IdentityService.Api.Service;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MimeKit;
+using UserService.Api.Service;
 
 
-namespace IdentityService.Api.Manager
+namespace UserService.Api.Manager
 {
     public class EMailRepository : IEMailInterface
     {
         private readonly string senderadress = "l2012729008@isparta.edu.tr";
-        public async Task EMailSend(string email)
+        private readonly string link = "Şifre Sıfırlama Bağlantısının adresi yazılacak";
+        public async Task EMailLinkSend(string email)
         {
             var EMail = new MimeMessage();
             MailboxAddress mailBoxAddressFrom = new MailboxAddress("Staj Takip Sistemi", senderadress);
@@ -18,10 +19,10 @@ namespace IdentityService.Api.Manager
             EMail.To.Add(mailboxAddressTo);
 
             var bodybuilder = new BodyBuilder();
-            bodybuilder.TextBody = "Kayıt İşlemini Gerçekleştirmek İçin Onay Kodunuz";
+            bodybuilder.TextBody = $"<p>Şifre Sıfırlama İşlemini Gerçekleştirmek için Bağlantı Adresiniz: <a href='{link}'>TIKLAYINIZ</a>.</p>"; 
             EMail.Body = bodybuilder.ToMessageBody();
 
-            EMail.Subject = "Staj Takip Sistemi Onay Kodu";
+            EMail.Subject = "Staj Yönetim Sistemi Şifre Sıfırlama Bağlantısı";
 
             SmtpClient client = new SmtpClient();
 

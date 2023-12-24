@@ -9,7 +9,6 @@ InternService.Api			-> http://localhost:2002
 FileService.Api				-> http://localhost:2003
 ImageService.Api			-> http://localhost:2004
 SurveyService.Api			-> http://localhost:2005
-IdentityService.Api			-> http://localhost:2006
 
 NotificationService			-> Console App
 

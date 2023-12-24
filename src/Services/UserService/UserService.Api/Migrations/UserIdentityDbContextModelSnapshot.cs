@@ -319,7 +319,7 @@ namespace UserService.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("personals");
+                    b.ToTable("personals", (string)null);
                 });
 
             modelBuilder.Entity("UserService.Api.Model.Student", b =>
@@ -408,7 +408,7 @@ namespace UserService.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("students");
+                    b.ToTable("students", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

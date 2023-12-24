@@ -12,7 +12,7 @@ namespace UserService.Api.Model
         public string PersonalNo { get; set; }
         public string Title { get; set; }
         public bool Gender{ get; set; }
-        public int ConfirmCode { get; set; }
+        public bool RegistrationCheck { get; set; }
         public string Password { get; set; }
         public string RePassword { get; set; }
 

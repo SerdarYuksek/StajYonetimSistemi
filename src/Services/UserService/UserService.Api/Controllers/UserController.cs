@@ -16,7 +16,7 @@ namespace UserService.Api.Controllers
         private CrudGenericRepository<Student> sgr;
         private CrudGenericRepository<Personal> pgr;
 
-        //User Controllerın Contructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
+        //User Controllerın Constructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
         public UserController(UserIdentityDbContext dbContext)
         {
             this.dbContext = dbContext;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Api.Model
 {
-    //User Servicesindeki Student Tablosunun Entityleri
+    //User Servicesindeki Student Tablosunun Identity kütüphanesi ile entegreli Entityleri
     public class Student : IdentityUser<int>
     {
         public string FirstName { get; set; }
@@ -13,6 +13,7 @@ namespace UserService.Api.Model
         public bool Gender { get; set; }
         public string Class { get; set; }
         public bool RegistrationCheck { get; set; }
+        public string Token { get; set; }
         public string Password { get; set; }
         public string RePassword { get; set; }
      

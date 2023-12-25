@@ -4,6 +4,7 @@ using UserService.Api.Model;
 
 namespace UserService.Api.Context
 {
+    //User bilgilerinin tutulduğu veritabanına IdentityServer kütüphanesini dahil etme
     public class UserIdentityDbContext : IdentityDbContext<AppUser, AppRole, int>
     {
         public UserIdentityDbContext(DbContextOptions<UserIdentityDbContext> options) : base(options)

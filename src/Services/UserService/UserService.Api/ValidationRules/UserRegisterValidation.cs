@@ -5,6 +5,7 @@ namespace UserService.Api.ValidationRules
 {
     public class UserRegisterValidation : AbstractValidator<AppUser>
     {
+        //Sisteme kayıt işlemi için kullanıcıların girdiği bilgileri Fluent Validation küfüphanesi ile kurallar ve hata mesajlarının tanımlanması
         public UserRegisterValidation()
         {
             //                            ---------Student------------

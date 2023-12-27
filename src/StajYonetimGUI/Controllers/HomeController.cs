@@ -17,6 +17,11 @@ namespace StajYonetimGUI.Controllers
         {
             return View();
         }
+        public IActionResult Loginpage()
+        {
+            return View();
+        }
+
 
         public IActionResult Privacy()
         {

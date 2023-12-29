@@ -11,18 +11,18 @@ namespace ImageService.Api.Models
         public string Id { get; set; }
 
         [BsonElement("FileName")]
-        public string FileName { get; set; }
+        public string ImageFileName { get; set; }
 
         [BsonElement("UserNo")]
         public string UserNo { get; set; }
 
         [BsonElement("FileType")]
-        public string FileType { get; set; }
+        public string ImageFileType { get; set; }
 
         [BsonElement("FileSize")]
-        public long FileSize { get; set; }
+        public long ImageFileSize { get; set; }
 
         [BsonElement("UploadDate")]
-        public DateTime UploadDate { get; set; }
+        public DateTime ImageUploadDate { get; set; }
     }
 }

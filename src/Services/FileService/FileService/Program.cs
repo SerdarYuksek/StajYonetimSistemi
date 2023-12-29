@@ -1,4 +1,10 @@
+using FileService.Api.Models;
+using FileService.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddSingleton<MongoDbService>();
 
 // Add services to the container.
 

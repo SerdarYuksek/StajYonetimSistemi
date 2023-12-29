@@ -47,11 +47,11 @@ namespace ImageService.Api.Controllers
                 // Fotoğraf bilgilerini MongoDB'ye kaydet
                 var newPhoto = new  ImageInfo
                 {
-                    FileName = fileName,
-                    FileType = fileExtension,
+                    ImageFileName = fileName,
+                    ImageFileType = fileExtension,
                     UserNo   = userNo,
-                    FileSize = file.Length,
-                    UploadDate = DateTime.UtcNow,
+                    ImageFileSize = file.Length,
+                    ImageUploadDate = DateTime.UtcNow,
                 };
 
                 _mongoDbService.SavePhotoInfo(newPhoto);
@@ -78,12 +78,12 @@ namespace ImageService.Api.Controllers
                 }
 
                 // Dosyanın bulunduğu klasörü belirle
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.ImageFileName);
 
                 // Dosya türünü belirle
-                var contentType = _mongoDbService.GetContentType(photo.FileName);
+                var contentType = _mongoDbService.GetContentType(photo.ImageFileName);
 
-                return File(System.IO.File.ReadAllBytes(filePath), contentType, photo.FileName);
+                return File(System.IO.File.ReadAllBytes(filePath), contentType, photo.ImageFileName);
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace ImageService.Api.Controllers
                 }
 
                 // Dosyayı sil
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.ImageFileName);
                 System.IO.File.Delete(filePath);
 
                 // MongoDB'den de sil
@@ -136,7 +136,7 @@ namespace ImageService.Api.Controllers
                 // Eğer kullanıcıya ait bir fotoğraf varsa, önce silelim
 
                 // Dosyayı sil
-                var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", existingPhoto.FileName);
+                var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", existingPhoto.ImageFileName);
                 System.IO.File.Delete(existingfilePath);
 
                 // MongoDB'den de sil
@@ -157,11 +157,11 @@ namespace ImageService.Api.Controllers
                 // Fotoğraf bilgilerini MongoDB'ye kaydet
                 var newPhoto = new ImageInfo
                 {
-                    FileName = fileName,
-                    FileType = fileExtension,
+                    ImageFileName = fileName,
+                    ImageFileType = fileExtension,
                     UserNo   = userNo,
-                    FileSize = file.Length,
-                    UploadDate = DateTime.UtcNow,
+                    ImageFileSize = file.Length,
+                    ImageUploadDate = DateTime.UtcNow,
                 };
 
                 _mongoDbService.SavePhotoInfo(newPhoto);

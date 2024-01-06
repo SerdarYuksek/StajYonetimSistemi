@@ -23,7 +23,8 @@ namespace InternService.Api.Model
         public bool SaturdayInc { get; set; }
         public bool Education { get; set; }
         public string StudentNo { get; set; }
-
+        public int InternStatusId { get; set; }
+        public InternStatus InternStatus { get; set; }
 
     }
 

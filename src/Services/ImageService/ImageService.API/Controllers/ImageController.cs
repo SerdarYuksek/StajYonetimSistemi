@@ -1,7 +1,6 @@
 ﻿using ImageService.Api.Models;
 using ImageService.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace ImageService.Api.Controllers
 {
@@ -20,36 +19,40 @@ namespace ImageService.Api.Controllers
 
         //Fotoğraf Kaydetme İşlemi
         [HttpPost("SaveImage")]
-        public IActionResult SaveImage(string userNo,IFormFile file)
+        public IActionResult SaveImage(string userNo, IFormFile file)
         {
             try
             {
-                // Dosya boyutu kontrolü
+                // Fotoğraf Dosyasının boyutu kontrolü
                 if (file.Length == 0)
                 {
                     return BadRequest("Dosya boş.");
                 }
 
-                // Dosya adını ve uzantısını al
-                var fileName = file.FileName;
-                var fileExtension = Path.GetExtension(fileName);
+                // Fotoğraf Dosyasının adını ve uzantısını al
+                var imageName = Path.GetFileNameWithoutExtension(file.FileName);
+                var sanitizedImageFileName = string.Join("_", imageName.Split(Path.GetInvalidFileNameChars()));
+                var imageFileExtension = Path.GetExtension(file.FileName);
 
-                // Dosyayı kaydedilecek klasörü belirle
-                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+                // Fotoğraf Dosyasının kaydedileceği klasörü belirle
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images");
 
-                // Dosyayı kaydet
-                var filePath = Path.Combine(uploadFolder, fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Fotoğraf Dosyasının kaydet
+                var imageFileNameWithGuid = $"{sanitizedImageFileName}_{Guid.NewGuid()}";
+                var imageFileNameWithExtension = $"{imageFileNameWithGuid}{imageFileExtension}";
+                var imageFilePath = Path.Combine(uploadFolder, imageFileNameWithExtension);
+
+                using (var stream = new FileStream(imageFilePath, FileMode.Create))
                 {
-                    file.CopyTo(fileStream);
+                    file.CopyTo(stream);
                 }
 
-                // Fotoğraf bilgilerini MongoDB'ye kaydet
-                var newPhoto = new  ImageInfo
+                // Fotoğraf dosyasının bilgilerini MongoDB'ye kaydet
+                var newPhoto = new ImageInfo
                 {
-                    ImageFileName = fileName,
-                    ImageFileType = fileExtension,
-                    UserNo   = userNo,
+                    ImageFileName = imageFileNameWithGuid,
+                    ImageFileType = imageFileExtension,
+                    UserNo = userNo,
                     ImageFileSize = file.Length,
                     ImageUploadDate = DateTime.UtcNow,
                 };
@@ -77,13 +80,14 @@ namespace ImageService.Api.Controllers
                     return NotFound("Fotoğraf bulunamadı.");
                 }
 
-                // Dosyanın bulunduğu klasörü belirle
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.ImageFileName);
-
                 // Dosya türünü belirle
-                var contentType = _mongoDbService.GetContentType(photo.ImageFileName);
+                var imageExtension = photo.ImageFileType;
 
-                return File(System.IO.File.ReadAllBytes(filePath), contentType, photo.ImageFileName);
+                // Dosyanın bulunduğu klasörü belirle
+                var imageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", photo.ImageFileName + imageExtension);
+
+                // Resim bytelarını UI tarafına gönder
+                return Ok(new ImageResponseModel { Bytes = System.IO.File.ReadAllBytes(imageFilePath), ImageName = photo.ImageFileName + imageExtension });
             }
             catch (Exception ex)
             {
@@ -104,7 +108,7 @@ namespace ImageService.Api.Controllers
                 }
 
                 // Dosyayı sil
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", photo.ImageFileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", photo.ImageFileName + photo.ImageFileType);
                 System.IO.File.Delete(filePath);
 
                 // MongoDB'den de sil
@@ -119,53 +123,65 @@ namespace ImageService.Api.Controllers
         }
 
         //Fotoğraf Güncelleme İşlemi
-        [HttpPost("UpdatePhoto")]
-        public IActionResult UpdatePhoto(string userNo, IFormFile file)
+        [HttpPost("UpdatePhoto{id}")]
+        public IActionResult UpdatePhoto(string id, IFormFile file)
         {
             try
             {
-                if (file == null || file.Length == 0)
+
+                var photo = _mongoDbService.GetPhoto(id);
+                if (photo == null)
                 {
-                    return BadRequest("Dosya boş.");
+                    return NotFound("Fotoğraf bulunamadı.");
                 }
 
-                // Kullanıcı numarasına göre ilgili fotoğrafı bul
-                var existingPhoto = _mongoDbService.GetAllPhotos()
-                    .FirstOrDefault(p => p.UserNo == userNo);
-
-                // Eğer kullanıcıya ait bir fotoğraf varsa, önce silelim
-
-                // Dosyayı sil
-                var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", existingPhoto.ImageFileName);
-                System.IO.File.Delete(existingfilePath);
-
-                // MongoDB'den de sil
-                _mongoDbService.DeletePhoto(existingPhoto.Id);
-
-                // Yeni fotoğrafı kaydet
-                var fileName = file.FileName;
-                var fileExtension = Path.GetExtension(fileName);
-
-                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Images");
-                var filePath = Path.Combine(uploadFolder, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                if (photo.UserNo != null)
                 {
-                    file.CopyTo(fileStream);
+                    // Öğrenci Numarasına göre ilgili Resim bulunur ve bilgileri atanır
+                    var existingPhoto = _mongoDbService.GetAllPhotos().FirstOrDefault(p => p.UserNo == photo.UserNo);
+
+                    // Eğer kullanıcıya ait bir fotoğraf varsa, silinir
+
+                    // Dosyayı sil
+                    var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", existingPhoto.ImageFileName + existingPhoto.ImageFileType);
+                    System.IO.File.Delete(existingfilePath);
+
+                    // MongoDB'den de sil
+                    _mongoDbService.DeletePhoto(existingPhoto.Id);
+
                 }
 
-                // Fotoğraf bilgilerini MongoDB'ye kaydet
+                // Yeni Resimi kaydet
+
+                // Fotoğraf Dosyasının adını ve uzantısını al
+                var imageName = Path.GetFileNameWithoutExtension(file.FileName);
+                var sanitizedImageFileName = string.Join("_", imageName.Split(Path.GetInvalidFileNameChars()));
+                var imageFileExtension = Path.GetExtension(file.FileName);
+
+                // Fotoğraf Dosyasının kaydedileceği klasörü belirle
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images");
+
+                // Fotoğraf Dosyasının kaydet
+                var imageFileNameWithGuid = $"{sanitizedImageFileName}_{Guid.NewGuid()}";
+                var imageFileNameWithExtension = $"{imageFileNameWithGuid}{imageFileExtension}";
+                var imageFilePath = Path.Combine(uploadFolder, imageFileNameWithExtension);
+
+                using (var stream = new FileStream(imageFilePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                // Fotoğraf dosyasının bilgilerini MongoDB'ye kaydet
                 var newPhoto = new ImageInfo
                 {
-                    ImageFileName = fileName,
-                    ImageFileType = fileExtension,
-                    UserNo   = userNo,
+                    ImageFileName = imageFileNameWithGuid,
+                    ImageFileType = imageFileExtension,
+                    UserNo = photo.UserNo,
                     ImageFileSize = file.Length,
                     ImageUploadDate = DateTime.UtcNow,
                 };
 
                 _mongoDbService.SavePhotoInfo(newPhoto);
-
                 return Ok("Fotoğraf başarıyla güncellendi ve kaydedildi.");
             }
             catch (Exception ex)
@@ -174,4 +190,5 @@ namespace ImageService.Api.Controllers
             }
         }
     }
+
 }

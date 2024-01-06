@@ -79,7 +79,6 @@ namespace UserService.Api.Controllers
                         {
                             return BadRequest(new { Message = $"{role} Kaydı Yapılamadı." });
                         }
-                     
 
                     case "student":
                         Student studentData = new Student

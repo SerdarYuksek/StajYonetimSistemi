@@ -9,6 +9,7 @@ namespace SurveyService.Api.Model
         public int ID { get; set; }
         public int QuestionNumber { get; set; }
         public string StudentNo { get; set; }
-        public string Answer { get; set; }
+        public string AnswerOption { get; set; }
+
     }
 }

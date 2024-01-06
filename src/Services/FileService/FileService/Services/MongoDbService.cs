@@ -1,14 +1,23 @@
 ﻿using FileService.Api.Models;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FileService.Api.Services
 {
+    //Dosya ile ilgili işlemler için İnterface
+    public interface IMongoDbService
+    {
+        void DeleteFile(string id);
+        IEnumerable<FileDataInfo> GetAllFiles();
+        FileDataInfo GetFile(string id);
+        List<FileDataInfo> GetFileByUserInternAndNumber(string? userNo, int? internNumber, int? fileNumber);
+        List<FileDataInfo> GetFilesByType(int? fileTypeNumber);
+        void SaveFileInfo(FileDataInfo file);
+    }
 
     //Dosya ile ilgili işlemler için option ayarlamaları ve CRUD fonksiyonları 
-    public class MongoDbService
+    public class MongoDbService : IMongoDbService
     {
         //ImageInfo modeli kullanılarak oluşturulan nesne
         private readonly IMongoCollection<FileDataInfo> _fileInfoCollection;
@@ -30,8 +39,8 @@ namespace FileService.Api.Services
         //Dosyanın Bilgilerinin Veritabanından Getirilmesi
         public FileDataInfo GetFile(string id)
         {
-            
-            return _fileInfoCollection.Find(p => p.Id.ToString() == id).FirstOrDefault();
+
+            return _fileInfoCollection.Find(p => p.Id == id).FirstOrDefault();
         }
 
         //Tüm Dosya Bilgilerinin Veritabanından Getirilmesi 
@@ -46,26 +55,15 @@ namespace FileService.Api.Services
             _fileInfoCollection.DeleteOne(p => p.Id.ToString() == id);
         }
 
-        // Dosya uzantısına göre MIME türünü belirle
-        public string GetContentType(string fileName)
-        { 
-            var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(fileName, out var contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-            return contentType;
-        }
-
         // Dosya türüne göre dosyaları MongoDB'den sorgula ve döndür
-        public List<FileDataInfo> GetFilesByType(int fileTypeNumber)
+        public List<FileDataInfo> GetFilesByType(int? fileTypeNumber)
         {
             return _fileInfoCollection.Find(file => file.FileTypeNumber == fileTypeNumber).ToList();
         }
 
         // Kullanıcı numarası, stajyer numarası ve dosya numarasına göre dosyayı MongoDB'den sorgula ve döndür
-        public List<FileDataInfo> GetFileByUserInternAndNumber(string userNo, int internNumber, int fileNumber)
-        {   
+        public List<FileDataInfo> GetFileByUserInternAndNumber(string? userNo, int? internNumber, int? fileNumber)
+        {
             return _fileInfoCollection.Find(file =>
                 file.UserNo == userNo &&
                 file.InternNumber == internNumber &&

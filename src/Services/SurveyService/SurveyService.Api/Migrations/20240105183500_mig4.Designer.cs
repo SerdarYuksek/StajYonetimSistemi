@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurveyService.Api.Context;
 
@@ -10,9 +11,11 @@ using SurveyService.Api.Context;
 namespace SurveyService.Api.Migrations
 {
     [DbContext(typeof(SurveyDbContext))]
-    partial class SurveyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240105183500_mig4")]
+    partial class mig4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,6 +44,8 @@ namespace SurveyService.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("QuestionNumber");
 
                     b.ToTable("surveyAnswers");
                 });
@@ -83,6 +88,17 @@ namespace SurveyService.Api.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("surveyQuestions");
+                });
+
+            modelBuilder.Entity("SurveyService.Api.Model.SurveyAnswer", b =>
+                {
+                    b.HasOne("SurveyService.Api.Model.SurveyQuestion", "SurveyQuestion")
+                        .WithMany()
+                        .HasForeignKey("QuestionNumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SurveyQuestion");
                 });
 #pragma warning restore 612, 618
         }

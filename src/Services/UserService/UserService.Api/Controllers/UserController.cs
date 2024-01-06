@@ -12,16 +12,16 @@ namespace UserService.Api.Controllers
     public class UserController : ControllerBase
     {
         //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 
-        private UserIdentityDbContext dbContext;
+        private UserIdentityDbContext DBContext;
         private CrudGenericRepository<Student> sgr;
         private CrudGenericRepository<Personal> pgr;
 
         //User Controllerın Constructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
-        public UserController(UserIdentityDbContext dbContext)
+        public UserController(UserIdentityDbContext dbContext, CrudGenericRepository<Student> studentRepository, CrudGenericRepository<Personal> personalRepository)
         {
-            this.dbContext = dbContext;
-            sgr = new CrudGenericRepository<Student>(dbContext);
-            pgr = new CrudGenericRepository<Personal>(dbContext);
+            DBContext = dbContext;
+            sgr = studentRepository;
+            pgr = personalRepository;
         }
 
         [HttpGet("UserList")]

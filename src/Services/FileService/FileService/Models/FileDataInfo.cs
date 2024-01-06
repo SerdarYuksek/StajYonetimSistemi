@@ -23,16 +23,16 @@ namespace FileService.Api.Models
         // 7= Staj Rapor Şablonu
        
         [BsonElement("FileTypeNumber")]
-        public int FileTypeNumber { get; set; }
+        public int? FileTypeNumber { get; set; }
 
         [BsonElement("InternNumber")]
-        public int InternNumber { get; set; }
+        public int? InternNumber { get; set; }
 
         [BsonElement("FileNumber")]
-        public int FileNumber { get; set; }
+        public int? FileNumber { get; set; }
 
         [BsonElement("UserNo")]
-        public string UserNo { get; set; }
+        public string? UserNo { get; set; }
 
         [BsonElement("FileType")]
         public string FileType { get; set; }

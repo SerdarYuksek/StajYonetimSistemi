@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SurveyService.Api.Context;
-using SurveyService.Api.Manager;
 using SurveyService.Api.Model;
+using SurveyService.Api.Services;
 using X.PagedList;
 
 namespace SurveyService.Api.Controllers
@@ -12,15 +12,15 @@ namespace SurveyService.Api.Controllers
     {
         //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 
         private SurveyDbContext dbContext;
-        private CrudGenericRepository<SurveyQuestion> sigr;
-        private CrudGenericRepository<SurveyAnswer> sagr;
+        private CrudGenericRepository<SurveyQuestion> surveyQuestionGenericRepo;
+        private CrudGenericRepository<SurveyAnswer> surveyAnswerGenericRepo;
 
         //User Controllerın Contructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
         public SurveyController(SurveyDbContext dbContext)
         {
             this.dbContext = dbContext;
-            sigr = new CrudGenericRepository<SurveyQuestion>(dbContext);
-            sagr = new CrudGenericRepository<SurveyAnswer>(dbContext);
+            surveyQuestionGenericRepo = new CrudGenericRepository<SurveyQuestion>(dbContext);
+            surveyAnswerGenericRepo = new CrudGenericRepository<SurveyAnswer>(dbContext);
         }
 
         // Anket Sorusu Oluşturma ekranına erişme (get)
@@ -35,29 +35,53 @@ namespace SurveyService.Api.Controllers
         [HttpPost("AddQuestion")]
         public IActionResult AddQuestion(SurveyQuestion s)
         {
-            int lastQuestionNumber = sigr.SGetListAll().Max(x => x.QuestionNumber);
-            s.QuestionNumber = lastQuestionNumber + 1;
-            sigr.SAdd(s);
-            return Ok(new { Message = "Anket Sorusu oluşturuldu." });
+            var lastQuestionNumber = surveyQuestionGenericRepo.SGetListAll().Max(x => x.QuestionNumber);
 
+            if (lastQuestionNumber == 0)
+            {
+                s.QuestionNumber = lastQuestionNumber + 1;
+                surveyQuestionGenericRepo.SAdd(s);
+                return Ok(new { Message = "Anket Sorusu oluşturuldu." });
+            }
+            else
+            {
+
+                s.QuestionNumber = lastQuestionNumber + 1;
+                surveyQuestionGenericRepo.SAdd(s);
+                return Ok(new { Message = "Anket Sorusu oluşturuldu." });
+            }
         }
 
         //Anket Sorusu silinecekse
-        [HttpDelete("QuestionDelete")]
-        public IActionResult QuestionDelete(SurveyQuestion s)
+        [HttpDelete("QuestionDelete{id}")]
+        public IActionResult QuestionDelete(int id)
         {
-            var SurveyID = sigr.SGetById(s.ID);
-            sigr.SDelete(SurveyID);
-            return Ok(new { Message = "Anket Sorusu silindi." });
+            if (id != null)
+            {
+                var question = surveyQuestionGenericRepo.SGetById(id);
+                surveyQuestionGenericRepo.SDelete(question);
+                return Ok(new { Message = "Anket Sorusu silindi." });
+            }
+            else
+            {
+                return BadRequest("İd değeri geçersiz");
+            }
+
         }
 
         //Anket Soru ve Şık bilgilerinin güncellemesi için id değerine göre soru içeriğinin ekrana getirilmesi
-        [HttpGet("QuestionUpdate")]
-        public IActionResult QuestionUpdate(int id)
+        [HttpGet("QuestionUpdate{id}")]
+        public IActionResult QuestionUpdate(int? id)
         {
-            var question = sigr.SGetById(id);
-            return Ok(question); 
-
+            if (id != null)
+            {
+                var question = surveyQuestionGenericRepo.SGetById(id);
+                return Ok(question);
+            }
+            else
+            {
+                return BadRequest("İd değeri geçersiz");
+            }
         }
 
         //Anket Soru ve şık bilgilerinin güncellenmesi
@@ -65,25 +89,34 @@ namespace SurveyService.Api.Controllers
         public IActionResult QuestionUpdate(SurveyQuestion s)
         {
 
-            var x = sigr.SGetById(s.ID);
+            var x = surveyQuestionGenericRepo.SGetById(s.ID);
 
-            x.Question = s.Question;
-            x.QuestionOptionsA = s.QuestionOptionsA;
-            x.QuestionOptionsB = s.QuestionOptionsB;
-            x.QuestionOptionsC = s.QuestionOptionsC;
-            x.QuestionOptionsD = s.QuestionOptionsD;
-            x.QuestionOptionsE = s.QuestionOptionsE;
+            var existQuestionNumber = surveyQuestionGenericRepo.SGetListAll().FirstOrDefault(x => x.QuestionNumber == s.QuestionNumber);
 
-            sigr.SUpdate(x);
-            return Ok(new { Message = "Anket Soru ve şıkları Başarıyla Güncellendi" });
+            if (existQuestionNumber.QuestionNumber != null && existQuestionNumber.QuestionNumber != s.QuestionNumber)
+            {
+                x.QuestionNumber = s.QuestionNumber;
+                x.Question = s.Question;
+                x.QuestionOptionsA = s.QuestionOptionsA;
+                x.QuestionOptionsB = s.QuestionOptionsB;
+                x.QuestionOptionsC = s.QuestionOptionsC;
+                x.QuestionOptionsD = s.QuestionOptionsD;
+                x.QuestionOptionsE = s.QuestionOptionsE;
 
+                surveyQuestionGenericRepo.SUpdate(x);
+                return Ok(new { Message = "Anket Soru ve şıkları Başarıyla Güncellendi" });
+            }
+            else
+            {
+                return BadRequest("Farklı bir soru numarası giriniz");
+            }
         }
 
         //Anket sorularının kullanıcıya teker teker sunulması
         [HttpGet("ListSurvey")]
-        public IActionResult ListSurvey( int page = 1)
+        public IActionResult ListSurvey(int page = 1)
         {
-            var surveyList = sigr.SGetListAll().ToPagedList(page, 1);
+            var surveyList = surveyQuestionGenericRepo.SGetListAll().ToPagedList(page, 1);
 
             // Eğer sayfa numarası, toplam sayfa sayısından büyükse, anket bitmiş demektir.
             if (page > surveyList.PageCount)
@@ -102,8 +135,8 @@ namespace SurveyService.Api.Controllers
         [HttpPost("AnswerSave")]
         public IActionResult AnswerSave(SurveyAnswer a)
         {
-            sagr.SAdd(a);
-            int nextPage = sigr.SGetListAll().ToPagedList().PageNumber + 1; // Sayfa numarasını bir artırarak bir sonraki soruya geçin
+            surveyAnswerGenericRepo.SAdd(a);
+            int nextPage = surveyQuestionGenericRepo.SGetListAll().ToPagedList().PageNumber + 1; // Sayfa numarasını bir artırarak bir sonraki soruya geçin
             return Ok(new { NextPage = nextPage }); //yeni page numarası ApiGatewaye gönderilerek listsurveye aktarılır.
         }
 

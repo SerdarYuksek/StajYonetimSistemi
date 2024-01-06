@@ -1,16 +1,23 @@
 ﻿using ImageService.Api.Models;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ImageService.Api.Services
 {
+    //Resimler ile ilgili işlemler için İnterface
+    public interface IMongoDbService
+    {
+        void DeletePhoto(string id);
+        IEnumerable<ImageInfo> GetAllPhotos();
+        ImageInfo GetPhoto(string id);
+        void SavePhotoInfo(ImageInfo ımage);
+    }
 
     //Resim ile ilgili işlemler için option ayarlamaları ve CRUD fonksiyonları 
-    public class MongoDbService
+    public class MongoDbService : IMongoDbService
     {
-       //ImageInfo modeli kullanılarak oluşturulan nesne
+        //ImageInfo modeli kullanılarak oluşturulan nesne
         private readonly IMongoCollection<ImageInfo> _ımageInfoCollection;
 
         //Oluşturulan nesnenin MongoDbService Constructerında dahil edilmesi
@@ -45,15 +52,5 @@ namespace ImageService.Api.Services
             _ımageInfoCollection.DeleteOne(p => p.Id == id);
         }
 
-        // Dosya uzantısına göre MIME türünü belirle
-        public string GetContentType(string fileName)
-        {
-            var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(fileName, out var contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-            return contentType;
-        }
     }
 }

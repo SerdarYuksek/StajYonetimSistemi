@@ -1,8 +1,6 @@
 ﻿using FileService.Api.Models;
 using FileService.Api.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 
 namespace FileService.Api.Controllers
 {
@@ -61,9 +59,9 @@ namespace FileService.Api.Controllers
                     FileName = fileNameWithGuid,
                     FileType = fileExtension,
                     UserNo = userNo,
-                    FileTypeNumber = (int)fileTypeNumber,
-                    FileNumber = (int)fileNumber,
-                    InternNumber = (int)internNumber,
+                    FileTypeNumber = fileTypeNumber,
+                    FileNumber = fileNumber,
+                    InternNumber = internNumber,
                     FileSize = file.Length,
                     UploadDate = DateTime.UtcNow,
                 };
@@ -91,8 +89,11 @@ namespace FileService.Api.Controllers
                     return NotFound("Dosya bulunamadı.");
                 }
 
+                // Dosya uzantısını al
+                var fileExtension = Path.GetExtension(file.FileName);
+
                 // Dosyayı sil
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName + fileExtension);
                 System.IO.File.Delete(filePath);
 
                 // MongoDB'den de sil
@@ -169,7 +170,7 @@ namespace FileService.Api.Controllers
                     // Eğer kullanıcıya ait bir fotoğraf varsa, önce silelim
 
                     // Dosyayı sil
-                    var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", existingFile.FileName);
+                    var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", existingFile.FileName + existingFile.FileType);
                     System.IO.File.Delete(existingfilePath);
 
                     // MongoDB'den de sil
@@ -225,7 +226,7 @@ namespace FileService.Api.Controllers
                     // Eğer kullanıcıya ait bir dosya varsa, önce silelim
 
                     // Dosyayı sil
-                    var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", existingFile.FileName);
+                    var existingfilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", existingFile.FileName + existingFile.FileType);
                     System.IO.File.Delete(existingfilePath);
 
                     // MongoDB'den de sil
@@ -296,19 +297,20 @@ namespace FileService.Api.Controllers
                     return NotFound("Dosya bulunamadı.");
                 }
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName);
-
                 // Dosya türünü belirle
-                var contentType = _mongoDbService.GetContentType(file.FileName);
+                var fileExtension = file.FileType;
+
+                // Dosya yolunu belirle
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName + fileExtension);
 
                 // Sadece PDF dosyalarını kontrol et
-                if (!string.Equals(contentType, "application/pdf", StringComparison.OrdinalIgnoreCase))
+                if (fileExtension.ToLower() != ".pdf")
                 {
-                    return BadRequest("Belirtilen dosya bir PDF değil.");
+                    return BadRequest("Sadece PDF dosyaları kabul edilmektedir.");
                 }
 
-                // Dosyayı kullanıcıya indir
-                return File(System.IO.File.ReadAllBytes(filePath), contentType, file.FileName);
+                // Dosya bytelarını UI tarafına gönder
+                return Ok(new FileResponseModel { Bytes = System.IO.File.ReadAllBytes(filePath), FileName = file.FileName + fileExtension });
             }
             catch (Exception ex)
             {
@@ -318,13 +320,23 @@ namespace FileService.Api.Controllers
 
         //Dosyayı Pdf olarak Web Tarayıcısında Görüntüleme İşlemi
         [HttpGet("ShowPdfFile/{id}")]
-        public FileResult ShowPdfFile(string id)
+        public IActionResult ShowPdfFile(string id)
         {
             var file = _mongoDbService.GetFile(id);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName);
-            var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Read);
-            return File(fileStream, "application/pdf");
+            var fileExtension = file.FileType;
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", file.FileName + fileExtension);
+
+            // Sadece PDF dosyalarını kontrol et
+            if (fileExtension.ToLower() != ".pdf")
+            {
+                return BadRequest("Sadece PDF dosyaları kabul edilmektedir.");
+            }
+
+            // Dosya bytelarını UI tarafına gönder
+            return Ok(new FileResponseModel { Bytes = System.IO.File.ReadAllBytes(filePath), FileName = file.FileName + fileExtension });
+
         }
     }
 }

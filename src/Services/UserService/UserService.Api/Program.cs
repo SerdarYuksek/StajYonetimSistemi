@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserService.Api.Context;
-using UserService.Api.Manager;
 using UserService.Api.Model;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,10 +51,6 @@ builder.Services.AddAuthentication(x =>
             ClockSkew = TimeSpan.Zero
         };
     });
-
-builder.Services.AddScoped(typeof(CrudGenericRepository<>));
-builder.Services.AddScoped<CrudGenericRepository<Student>>();
-builder.Services.AddScoped<CrudGenericRepository<Personal>>();
 
 builder.Services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
 var app = builder.Build();

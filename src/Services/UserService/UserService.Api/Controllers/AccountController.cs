@@ -1,17 +1,11 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using UserService.Api.Manager;
 using UserService.Api.Model;
+using UserService.Api.Service;
+using UserService.Api.Services;
 using UserService.Api.ValidationRules;
 
 namespace UserService.Api.Controllers
@@ -27,15 +21,17 @@ namespace UserService.Api.Controllers
         private readonly UserRegisterValidation _validationRules;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly TokenRepository _tokenRepo;
 
         //Account Controllerın Constructerına kullanılmak üzere nesneler dahil edildi
-        public AccountController(EMailRepository eMailRepository, UserManager<AppUser> userManager, UserRegisterValidation validationRules, SignInManager<AppUser> signInManager, IConfiguration configuration)
+        public AccountController(EMailRepository eMailRepository, UserManager<AppUser> userManager, UserRegisterValidation validationRules, SignInManager<AppUser> signInManager, IConfiguration configuration, TokenRepository tokenRepo)
         {
             _eMailRepository = eMailRepository;
             _userManager = userManager;
             _validationRules = validationRules;
             _signInManager = signInManager;
             _configuration = configuration;
+            _tokenRepo = tokenRepo;
         }
 
         //Kullanıcı kayıt ekranını getirme
@@ -54,59 +50,29 @@ namespace UserService.Api.Controllers
 
             if (result.IsValid)
             {
-                switch (role)
+                AppUser userData = new AppUser
                 {
-                    case "personal":
-                        Personal personalData = new Personal
-                        {
-                            FirstName = u.PersonalData.FirstName,
-                            Surname = u.PersonalData.Surname,
-                            TCNO = u.PersonalData.TCNO,
-                            PersonalNo = u.PersonalData.PersonalNo,
-                            Title = u.PersonalData.Title,
-                            Gender = u.PersonalData.Gender,
-                            Email = u.PersonalData.Email,
-                            PhoneNumber = u.PersonalData.PhoneNumber,
-                        };
+                    FirstName = u.FirstName,
+                    Surname = u.Surname,
+                    TCNO = u.TCNO,
+                    PersonalNo = u.PersonalNo,
+                    StudentNo = u.StudentNo,
+                    Class = u.Class,
+                    Title = u.Title,
+                    Gender = u.Gender,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                };
 
-                        u.PersonalData = personalData; // AppUser içinde PersonalData'ya atama yap
-                       var personalUser =  await _userManager.CreateAsync(u, u.PersonalData.Password);
-                        if (personalUser.Succeeded)
-                        {
-                            return Ok(new { Message = $"{role} Kaydı Yapıldı." });
-                        }
-                        else
-                        {
-                            return BadRequest(new { Message = $"{role} Kaydı Yapılamadı." });
-                        }
-
-                    case "student":
-                        Student studentData = new Student
-                        {
-                            FirstName = u.StudentData.FirstName,
-                            Surname = u.StudentData.Surname,
-                            TCNO = u.StudentData.TCNO,
-                            StudentNo = u.StudentData.StudentNo,
-                            Gender = u.StudentData.Gender,
-                            Email = u.StudentData.Email,
-                            PhoneNumber = u.StudentData.PhoneNumber,
-                            Class = u.StudentData.Class,
-                        };
-                        u.StudentData = studentData; // AppUser içinde StudentData'ya atama yap
-                        var studentUser = await _userManager.CreateAsync(u, u.StudentData.Password);
-                        if (studentUser.Succeeded)
-                        {
-                            return Ok(new { Message = $"{role} Kaydı Yapıldı." });
-                        }
-                        else
-                        {
-                            return BadRequest(new { Message = $"{role} Kaydı Yapılamadı." });
-                        }
-
-                    default:
-                        return BadRequest(new { Message = "Geçersiz rol değeri." });
+                var personalUser = await _userManager.CreateAsync(u, u.Password);
+                if (personalUser.Succeeded)
+                {
+                    return Ok(new { Message = $"{role} Kaydı Yapıldı." });
                 }
-
+                else
+                {
+                    return BadRequest(new { Message = $"{role} Kaydı Yapılamadı." });
+                }
             }
             else
             {
@@ -115,7 +81,6 @@ namespace UserService.Api.Controllers
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
             }
-
             return BadRequest(new { Message = "Validasyon Yapılmadı." });
         }
 
@@ -133,16 +98,16 @@ namespace UserService.Api.Controllers
             role = role.ToLower();
             var user = await _userManager.FindByIdAsync(loginView.Id.ToString());
 
-            if (role == "personal" && user.PersonalData.RegistrationCheck==true) //rol ve personel onayı kontrolü
+            if (role == "personal" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
             {
                 var personalResult = await _signInManager.PasswordSignInAsync(loginView.PersonalNo, loginView.Password, false, true); //Personel bilgilerinin kontrolü
-                return personalResult.Succeeded ? Ok(new { token = GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
-               
+                return personalResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
+
             }
-            else if (role == "student" && user.StudentData.RegistrationCheck == true) //rol ve personel onayı kontrolü
+            else if (role == "student" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
             {
                 var studentResult = await _signInManager.PasswordSignInAsync(loginView.StudentNo, loginView.Password, false, true); //Student bilgilerinin kontrolü
-                return studentResult.Succeeded ? Ok(new { token =  GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
+                return studentResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
             }
             else
             {
@@ -150,48 +115,11 @@ namespace UserService.Api.Controllers
             }
         }
 
-        
-        private string GenerateJwtToken(string role, AppUser user, IConfiguration configuration)
-        {
-            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"]));
-            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var Expiration = DateTime.UtcNow.AddHours(1);  //oturum süresi (1 saat)
-
-            var tokenDescriptor = new SecurityTokenDescriptor  // Token oluşturma parametreleri
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                     new Claim(ClaimTypes.Name, user.UserName),
-                     new Claim(ClaimTypes.Role, role),
-                }),
-                Expires = Expiration,
-                SigningCredentials = credentials
-            };
-
-            JwtSecurityTokenHandler tokenHandler = new(); 
-            var AccessToken = tokenHandler.CreateToken(tokenDescriptor);  //Token Oluşturma
-
-            switch (role)  //Rol kontrolüne göre tokenları veritabanına kaydetme
-            {
-                case "personal":
-                    user.PersonalData.Token = AccessToken.ToString();
-                    break;
-                case "student":
-                    user.StudentData.Token = AccessToken.ToString();
-                    break;
-                default:
-                    break;
-            }
-
-            return tokenHandler.WriteToken(AccessToken);
-        }
-
         //Sistemden çıkış yapma 
         [HttpGet("UserLogOut")]
         public async Task<IActionResult> UserLogOut()
         {
-           
+
             await HttpContext.SignOutAsync("stajyonetim.Auth"); //Sistemden çıkış yaptıran ve tutulan cookieleri silme
 
             return Ok(new { Message = "Çıkış yapıldı." });
@@ -206,42 +134,14 @@ namespace UserService.Api.Controllers
 
         //Mail ekranından gelen bilgilere ve rol bilgisine göre kullanıcı mailine şifre sıfırlama bağlantısı gönderme
         [HttpPost("SendNewPasswordMail")]
-        public async Task<IActionResult> SendNewPasswordMail(string role, string email)
+        public async Task<IActionResult> SendNewPasswordMail(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            role = role.ToLower();
-
-            switch (role) //rol kontrolü
+            if (email != null)
             {
-                case "personal":
-                    if (user.PersonalData.Email == email) //mail kontrolü
-                    {
-                        _eMailRepository.EMailLinkSend(email); //mail gönderme fonksiyonu
-                        return Ok(new { Message = "EMail Başarıyla Gönderilmiştir." });
-                    }
-                    else
-                    {
-                        return BadRequest(new { Message = "Mail Adresi Sisteme Kayıtlı Değildir." });
-                    }
-
-                case "student":
-                    if (user.StudentData.Email == email)
-                    {
-                        _eMailRepository.EMailLinkSend(email); //mail gönderme fonksiyonu
-                        return Ok(new { Message = "EMail Başarıyla Gönderilmiştir." });
-                    }
-                    else
-                    {
-                        return BadRequest(new { Message = "Mail Adresi Sisteme Kayıtlı Değildir." });
-                    }
-
-                default:
-                    return BadRequest(new { Message = "Geçersiz rol değeri." });
-
-
+                _eMailRepository.EMailLinkSend(email); //mail gönderme fonksiyonu
+                return Ok(new { Message = "EMail Başarıyla Gönderilmiştir." });
             }
-
+            return BadRequest(new { Message = "Mail adresi boş." });
         }
 
         //Kullanıcı Şifre sıfırlama ekranının getirilmesi 
@@ -253,63 +153,32 @@ namespace UserService.Api.Controllers
 
         //Kullanıcı Şifre sıfırlama ekranından gelen bilgilere ve rol bilgisine göre şifreyi sıfırlama 
         [HttpPut("UserPasswordReset")]
-        public async Task<IActionResult> UserResetPassword(string role, AppUser u)
+        public async Task<IActionResult> UserResetPassword(AppUser u)
         {
-            role = role.ToLower();
             ValidationResult validationresult = _validationRules.Validate(u);
 
             if (validationresult.IsValid)
             {
-                switch (role)
+                var user = await _userManager.FindByIdAsync(u.Id.ToString());
+
+                if (user == null)
                 {
-                    case "personal":
-                        var personaluser = await _userManager.FindByEmailAsync(u.PersonalData.Email);
+                    return BadRequest(new { Message = "Kullanıcı bulunamadı." });
+                }
 
-                        if (personaluser == null)
-                        {
-                            return BadRequest(new { Message = "Kullanıcı bulunamadı." });
-                        }
+                // Şifre sıfırlama işlemi için kullanıcıya ait token'i kullanarak yeni şifreyi ayarla
+                var userResult = await _userManager.ResetPasswordAsync(user, u.Token, u.Password);
 
-                        // Şifre sıfırlama işlemi için kullanıcıya ait token'i kullanarak yeni şifreyi ayarla
-                        var personalresult = await _userManager.ResetPasswordAsync(personaluser, u.PersonalData.Token, u.StudentData.Password);
-
-                        // İşlem başarılı ise OK döndür
-                        if (personalresult.Succeeded)
-                        {
-                            return Ok(new { Message = "Şifre başarıyla Değiştirildi." });
-                        }
-                        else
-                        {
-                            // İşlem başarısız ise hataları BadRequest ile döndür
-                            var errors = personalresult.Errors.Select(e => e.Description).ToList();
-                            return BadRequest(new { Errors = errors });
-                        }
-
-                    case "student":
-
-                        var studentuser = await _userManager.FindByEmailAsync(u.StudentData.Email);
-
-                        if (studentuser == null)
-                        {
-                            return BadRequest(new { Message = "Kullanıcı bulunamadı." });
-                        }
-
-                        // Şifre sıfırlama işlemi için kullanıcıya ait token'i kullanarak yeni şifreyi ayarla
-                        var studentresult = await _userManager.ResetPasswordAsync(studentuser, u.StudentData.Token, u.StudentData.Password);
-         
-                        if (studentresult.Succeeded)
-                        {
-                            return Ok(new { Message = "Şifre başarıyla Değiştirildi." });
-                        }
-                        else
-                        {
-                            var errors = studentresult.Errors.Select(e => e.Description).ToList();
-                            return BadRequest(new { Errors = errors });
-                        }
-
-                    default:
-
-                        return BadRequest(new { Message = "Geçersiz rol değeri." });
+                // İşlem başarılı ise OK döndür
+                if (userResult.Succeeded)
+                {
+                    return Ok(new { Message = "Şifre başarıyla Değiştirildi." });
+                }
+                else
+                {
+                    // İşlem başarısız ise hataları BadRequest ile döndür
+                    var errors = userResult.Errors.Select(e => e.Description).ToList();
+                    return BadRequest(new { Errors = errors });
                 }
             }
             else

@@ -25,7 +25,6 @@ namespace InternService.Api.Model
         public string StudentNo { get; set; }
         public int InternStatusId { get; set; }
         public InternStatus InternStatus { get; set; }
-
     }
 
 }

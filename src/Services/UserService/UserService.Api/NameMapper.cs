@@ -8,13 +8,21 @@ namespace UserService.Api
     {
         public NameMapper()
         {
-            //AutoMapper İle ad soyad bilgilerini birleştirerek Dtoya aktarıyoruz
-            CreateMap<Student, IdentityUser>()
+            //AutoMapper İle ad soyad bilgilerini birleştirerek Modellere aktarıyoruz
+            CreateMap<AppUser, IdentityUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.Surname));
 
-            CreateMap<Personal, IdentityUser>()
+            CreateMap<AppUser, PersonalListResponseModel>()
                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.Surname));
 
+            CreateMap<AppUser, StudentListResponseModel>()
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.Surname));
+
+            CreateMap<AppUser, PersonalUpdateResponseModel>()
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.Surname));
+
+            CreateMap<AppUser, StudentUpdateResponseModel>()
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.Surname));
         }
     }
 }

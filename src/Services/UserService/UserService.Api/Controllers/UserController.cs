@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using UserService.Api.Context;
-using UserService.Api.Manager;
 using UserService.Api.Model;
+using UserService.Api.Services;
 using X.PagedList;
 
 
@@ -11,124 +12,125 @@ namespace UserService.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 
+        //Generic Classta yapılan CRUD işlemleri ve Identity kütüphanesi için nesneler oluşturuldu 
         private UserIdentityDbContext DBContext;
-        private CrudGenericRepository<Student> sgr;
-        private CrudGenericRepository<Personal> pgr;
+        private CrudGenericRepository<AppUser> _userGenericRepo;
 
-        //User Controllerın Constructerında dbcontextimiz ve nesnelerimiz generic taraf ile bağlandı
-        public UserController(UserIdentityDbContext dbContext, CrudGenericRepository<Student> studentRepository, CrudGenericRepository<Personal> personalRepository)
+        //Oluşturulan nesneler constructırda tanımlandı
+        public UserController(UserIdentityDbContext dbContext, CrudGenericRepository<AppUser> userGenericRepo)
         {
             DBContext = dbContext;
-            sgr = studentRepository;
-            pgr = personalRepository;
+            _userGenericRepo = userGenericRepo;
         }
 
-        [HttpGet("UserList")]
-        //Rol Bilgisine Göre Kullanıcıların Listelenmesi
-        public IActionResult UserList(string role, int page = 1)
+        // Rol Bilgisine Göre Kullanıcıların Listelenmesi
+        [HttpGet("UserList/{id}")]
+        public IActionResult UserList(string roles, int page = 1)
         {
-            // Rolü Personal Olan Kullanıcıların Listelenmesi
-            if (role == "Personal")
+            if (roles != null)
             {
-                var personal = pgr.UGetListAll().ToPagedList(page, 5);
-                return Ok(personal);
-            }
-            // Rolü Student Olan Kullanıcıların Listelenmesi
-            else if (role == "Student")
-            {
-                var students = sgr.UGetListAll().ToPagedList(page, 5);
-                return Ok(students);
-            }
+                // Rolü "Personal" Olan Kullanıcıların Listelenmesi
+                if (roles.Contains("Personal"))
+                {
+                    var personals = _userGenericRepo.UGetListAll().Where(x => x.Role == roles).ToPagedList(page, 5);
+                    var responseModelList = personals.Select(user => new PersonalListResponseModel
+                    {
+                        UserName = user.UserName,
+                        PersonalNo = user.PersonalNo,
+                        Email = user.Email,
+                        Title = user.Title
+                    }).ToList();
 
-            // Belirli bir role uymadığı durumda hata mesajı .
+                    return Ok(responseModelList);
+                }
+                // Rolü "Student" Olan Kullanıcıların Listelenmesi
+                else if (roles.Contains("Student"))
+                {
+                    var students = _userGenericRepo.UGetListAll().Where(x => x.Role == roles).ToPagedList(page, 5);
+                    var responseModelList = students.Select(user => new StudentListResponseModel
+                    {
+                        UserName = user.UserName,
+                        StudentNo = user.StudentNo,
+                        Email = user.Email
+                    }).ToList();
+
+                    return Ok(responseModelList);
+                }
+            }
+            // Belirli bir role uymadığı durumda hata mesajı
             return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
-
         }
 
-        [HttpDelete("UserDel")]
-        //Rol Bilgisine Göre Kullanıcıların Silinmesi
-        public IActionResult UserDel(string role, int id)
+        // Kullanıcıların Silinmesi
+        [HttpDelete("UserDel/{id}")]
+        public IActionResult UserDel(int id)
         {
-            // Rolü Personal Olan Kullanıcının Silinmesi
-            if (role == "Personal")
-            {
-                var personalId = pgr.UGetById(id);
-                pgr.UDelete(personalId);
-                return Ok(new { Message = "Kişi başarıyla silindi." });
-            }
-            // Rolü Student Olan Kullanıcının Silinmesi
-            else if (role == "Student")
-            {
-                var StudentId = sgr.UGetById(id);
-                sgr.UDelete(StudentId);
-                return Ok(new { Message = "Kişi başarıyla silindi." });
-            }
-            // Belirli bir role uymadığı durumda hata mesajı .
-            return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
-
+            var user = _userGenericRepo.UGetById(id);
+            _userGenericRepo.UDelete(user);
+            return Ok(new { Message = "Kişi başarıyla silindi." });
         }
 
-        [HttpGet("UserUpdate")]
         //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
-        public IActionResult UserUpdate(string role, int id)
+        [HttpGet("UserUpdate/{id}")]
+        public IActionResult UserUpdate(int id)
         {
-            // Rolü Personal ve id değeri ile eşleşen Kullanıcının Bilgilerin Ekrana Getirilmesi
-            if (role == "Personal")
+            var user = _userGenericRepo.UGetById(id);
+
+            // Rolü Personal olan Kullanıcının Bilgilerinin Ekrana Getirilmesi
+            if (user.Role == "Personal")
             {
-                var personal = pgr.UGetById(id);
-                return Ok(personal);
+                return Ok(new PersonalUpdateResponseModel
+                {
+                    UserName = user.UserName,
+                    TCNO = user.TCNO,
+                    Gender = user.Gender,
+                    PersonalNo = user.PersonalNo,
+                    Email = user.Email,
+                    Tittle = user.Title,
+                });
             }
-            // Rolü Student ve id değeri ile eşleşen Kullanıcının Bilgilerin Ekrana Getirilmesi
-            else if (role == "Student")
+            // Rolü Student olan Kullanıcının Bilgilerinin Ekrana Getirilmesi
+            else if (user.Role == "Student")
             {
-                var student = sgr.UGetById(id);
-                return Ok(student);
+                return Ok(new StudentUpdateResponseModel
+                {
+                    UserName = user.UserName,
+                    TCNO = user.TCNO,
+                    Gender = user.Gender,
+                    StudentNo = user.StudentNo,
+                    Email = user.Email,
+                    Class = user.Class,
+                });
             }
             // Belirli bir role uymadığı durumda hata mesajı .
             return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
         }
 
+        //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
         [HttpPut("UserUpdate")]
-        //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
-        public IActionResult UserUpdate(string role, AppUser u)
+        public IActionResult UserUpdate(AppUser u)
         {
-            // Rolü Personal ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
-            if (role == "Personal")
+            if (u != null)
             {
-                var x = pgr.UGetById(u.PersonalData.Id);
+                var user = _userGenericRepo.UGetById(u.Id);
 
-                x.FirstName = u.PersonalData.FirstName;
-                x.Surname = u.PersonalData.Surname;
-                x.TCNO = u.PersonalData.TCNO;
-                x.Gender = u.PersonalData.Gender;
-                x.Email = u.PersonalData.Email;
-                x.PhoneNumber = u.PhoneNumber;
-                x.PersonalNo = u.PersonalData.PersonalNo;
-                x.Title = u.PersonalData.Title;
+                user.FirstName = u.FirstName;
+                user.Surname = u.Surname;
+                user.TCNO = u.TCNO;
+                user.Gender = u.Gender;
+                user.Email = u.Email;
+                user.PhoneNumber = u.PhoneNumber;
+                user.PersonalNo = u.PersonalNo;
+                user.StudentNo = u.StudentNo;
+                user.Title = u.Title;
+                user.Class = u.Class;
 
-                pgr.UUpdate(x);
-                return Ok(new { Message = "Kişi başarıyla Güncellendi." });
+                _userGenericRepo.UUpdate(user);
+                return Ok(new { Message = "Kişi başarıyla güncellendi." });
             }
-            // Rolü Student ve id değeri ile eşleşen kullanıcının bilgilerinin güncellenmesi
-            else if (role == "Student")
-            {
-                var x = sgr.UGetById(u.StudentData.Id);
 
-                x.FirstName = u.StudentData.FirstName;
-                x.Surname = u.StudentData.Surname;
-                x.TCNO = u.StudentData.TCNO;
-                x.Gender = u.StudentData.Gender;
-                x.Class = u.StudentData.Class;
-                x.Email = u.StudentData.Email;
-                x.PhoneNumber = u.PhoneNumber;
-                x.StudentNo = u.StudentData.StudentNo;
-
-                sgr.UUpdate(x);
-                return Ok(new { Message = "Kişi başarıyla Güncellendi." });
-            }
-            // Belirli bir role uymadığı durumda hata mesajı .
-            return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
+            // Belirli bir role uymadığı durumda hata mesajı.
+            return BadRequest("Gelen user değerleri boş.");
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternService.Api.Migrations
 {
     [DbContext(typeof(InternDbContext))]
-    [Migration("20231231093327_mig2")]
-    partial class mig2
+    [Migration("20240106153934_mig3")]
+    partial class mig3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,13 +112,13 @@ namespace InternService.Api.Migrations
                     b.Property<int>("AcceptDay")
                         .HasColumnType("int");
 
-                    b.Property<bool>("ContributConfirm")
+                    b.Property<bool>("AcceptStatus")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("InternAccept")
+                    b.Property<bool>("ConfirmStatus")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("InternConfirm")
+                    b.Property<bool>("ContributStatus")
                         .HasColumnType("bit");
 
                     b.Property<string>("RejectReason")

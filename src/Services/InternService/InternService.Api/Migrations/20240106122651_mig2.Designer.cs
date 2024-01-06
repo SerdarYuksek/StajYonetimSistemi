@@ -4,6 +4,7 @@ using InternService.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternService.Api.Migrations
 {
     [DbContext(typeof(InternDbContext))]
-    partial class InternDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240106122651_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,13 +112,13 @@ namespace InternService.Api.Migrations
                     b.Property<int>("AcceptDay")
                         .HasColumnType("int");
 
-                    b.Property<bool>("AcceptStatus")
+                    b.Property<bool>("ContributConfirm")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ConfirmStatus")
+                    b.Property<bool>("InternAccept")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ContributStatus")
+                    b.Property<bool>("InternConfirm")
                         .HasColumnType("bit");
 
                     b.Property<string>("RejectReason")

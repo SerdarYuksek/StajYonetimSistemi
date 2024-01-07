@@ -13,21 +13,17 @@ namespace StajYonetimGUI.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+       
         public IActionResult Loginpage()
         {
             return View();
         }
 
-
-        public IActionResult Privacy()
+        public IActionResult AdminPanel()
         {
             return View();
         }
-
+       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

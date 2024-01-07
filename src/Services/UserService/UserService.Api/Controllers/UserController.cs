@@ -24,7 +24,7 @@ namespace UserService.Api.Controllers
         }
 
         // Rol Bilgisine Göre Kullanıcıların Listelenmesi
-        [HttpGet("UserList/{id}")]
+        [HttpGet("UserList")]
         public IActionResult UserList(string roles, int page = 1)
         {
             if (roles != null)
@@ -76,7 +76,7 @@ namespace UserService.Api.Controllers
         {
             var user = _userGenericRepo.UGetById(id);
 
-            // Rolü Personal olan Kullanıcının Bilgilerinin Ekrana Getirilmesi
+            // Rolü Personal olan Kullanıcı Bilgilerinin Ekrana Getirilmesi
             if (user.Role == "Personal")
             {
                 return Ok(new PersonalUpdateResponseModel
@@ -89,7 +89,7 @@ namespace UserService.Api.Controllers
                     Tittle = user.Title,
                 });
             }
-            // Rolü Student olan Kullanıcının Bilgilerinin Ekrana Getirilmesi
+            // Rolü Student olan Kullanıcı Bilgilerinin Ekrana Getirilmesi
             else if (user.Role == "Student")
             {
                 return Ok(new StudentUpdateResponseModel
@@ -106,7 +106,7 @@ namespace UserService.Api.Controllers
             return BadRequest("Belirtilen role uyan kullanıcılar bulunamadı.");
         }
 
-        //Rol Bilgisine Göre Kullanıcıların Güncellenmesi
+        // Kullanıcıların Güncellenmesi
         [HttpPut("UserUpdate")]
         public IActionResult UserUpdate(AppUser u)
         {
@@ -124,12 +124,13 @@ namespace UserService.Api.Controllers
                 user.StudentNo = u.StudentNo;
                 user.Title = u.Title;
                 user.Class = u.Class;
+                user.UserName = u.FirstName + u.Surname;
 
                 _userGenericRepo.UUpdate(user);
                 return Ok(new { Message = "Kişi başarıyla güncellendi." });
             }
 
-            // Belirli bir role uymadığı durumda hata mesajı.
+            // Bir değer gelmediği zamanki hata mesajı.
             return BadRequest("Gelen user değerleri boş.");
         }
     }

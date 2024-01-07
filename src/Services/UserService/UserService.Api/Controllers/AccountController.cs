@@ -38,15 +38,14 @@ namespace UserService.Api.Controllers
         [HttpGet("UserSignUp")]
         public IActionResult UserSignUp()
         {
-            return Ok();
+            return Ok(new { Message = "kayıt sayfası ekrana geldi" });
         }
 
-        //Kullanıcı kayıt ekranından gelen bilgiler ve rol bilgisine göre sisteme (veritabanına) kaydedilmesi
+        //Kullanıcının kayıt olması
         [HttpPost("UserSignUp")]
-        public async Task<IActionResult> UserSignUp(string role, AppUser u)
+        public async Task<IActionResult> UserSignUp(AppUser u)
         {
             ValidationResult result = _validationRules.Validate(u);
-            role = role.ToLower();
 
             if (result.IsValid)
             {
@@ -58,20 +57,22 @@ namespace UserService.Api.Controllers
                     PersonalNo = u.PersonalNo,
                     StudentNo = u.StudentNo,
                     Class = u.Class,
+                    Role = u.Role,
                     Title = u.Title,
                     Gender = u.Gender,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
+                    UserName = u.FirstName + u.Surname
                 };
-
-                var personalUser = await _userManager.CreateAsync(u, u.Password);
-                if (personalUser.Succeeded)
+                u.UserName = u.FirstName + u.Surname;
+                var User = await _userManager.CreateAsync(u, u.Password);
+                if (User.Succeeded)
                 {
-                    return Ok(new { Message = $"{role} Kaydı Yapıldı." });
+                    return Ok(new { Message = $"{u.Role} Kaydı Yapıldı." });
                 }
                 else
                 {
-                    return BadRequest(new { Message = $"{role} Kaydı Yapılamadı." });
+                    return BadRequest(new { Message = $"{u.Role} Kaydı Yapılamadı." });
                 }
             }
             else
@@ -88,26 +89,27 @@ namespace UserService.Api.Controllers
         [HttpGet("UserSignIn")]
         public IActionResult UserSıgnIn()
         {
-            return Ok();
+            return Ok(new { Message = "giriş sayfası ekrana geldi" });
         }
 
         //Kullanıcı giriş ekranından gelen bilgiler ve rol bilgisine göre kullanıcının sisteme giriş yapması
         [HttpPost("UserSigIn")]
-        public async Task<IActionResult> UserSignIn(string role, LoginViewModel loginView)
+        public async Task<IActionResult> UserSignIn(LoginViewModel loginView)
         {
-            role = role.ToLower();
             var user = await _userManager.FindByIdAsync(loginView.Id.ToString());
 
-            if (role == "personal" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
+            if (user.Role == "test") //rol ve personel onayı kontrolü
             {
-                var personalResult = await _signInManager.PasswordSignInAsync(loginView.PersonalNo, loginView.Password, false, true); //Personel bilgilerinin kontrolü
-                return personalResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
+                loginView.UserName = loginView.PersonalNo;
+                var personalResult = await _signInManager.PasswordSignInAsync(loginView.UserName, loginView.Password, false, false); //Personel bilgilerinin kontrolü
+                return personalResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(user.Role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
 
             }
-            else if (role == "student" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
+            else if (user.Role == "Student" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
             {
+                loginView.UserName = loginView.StudentNo;
                 var studentResult = await _signInManager.PasswordSignInAsync(loginView.StudentNo, loginView.Password, false, true); //Student bilgilerinin kontrolü
-                return studentResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
+                return studentResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(user.Role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
             }
             else
             {

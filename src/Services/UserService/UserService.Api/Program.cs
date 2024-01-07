@@ -5,56 +5,73 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserService.Api.Context;
 using UserService.Api.Model;
+using UserService.Api.Service;
+using UserService.Api.Services;
+using UserService.Api.ValidationRules;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
-builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<UserIdentityDbContext>().AddDefaultTokenProviders();
-builder.Services.Configure<IdentityOptions>(o =>
+
+// Identity konfigürasyonu
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
-    o.Password.RequireDigit = false;
-    o.Password.RequireLowercase = false;
-    o.Password.RequireUppercase = false;
-    o.Password.RequireNonAlphanumeric = false;
-});
+    // Þifre politikalarýný yapýlandýrma
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 1;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+})
+.AddEntityFrameworkStores<UserIdentityDbContext>()
+.AddDefaultTokenProviders();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// Authentication ve Authorization eklemeleri
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddCookie("default", o =>
+.AddCookie("default", o =>
+{
+    o.Cookie.Name = "stajyonetim.Auth";
+    o.Cookie.Expiration = TimeSpan.FromDays(7);
+    o.Cookie.HttpOnly = true;
+    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    o.Cookie.SameSite = SameSiteMode.Strict;
+})
+.AddJwtBearer(o =>
+{
+    o.RequireHttpsMetadata = false;
+    o.SaveToken = true;
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        o.Cookie.Name = "stajyonetim.Auth";
-        o.Cookie.Expiration = TimeSpan.FromDays(7);
-        o.Cookie.HttpOnly = true;
-        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        o.Cookie.SameSite = SameSiteMode.Strict;
-    })
-    .AddJwtBearer(o =>
-    {
-        o.RequireHttpsMetadata = false;
-        o.SaveToken = true;
-        o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
-builder.Services.AddDbContext<UserIdentityDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
+// Dependency Injection
+builder.Services.AddScoped<EMailRepository>();
+builder.Services.AddScoped<UserRegisterValidation>();
+builder.Services.AddScoped<TokenRepository>();
+builder.Services.AddScoped<CrudGenericRepository<AppUser>>();
+
+// DbContext konfigürasyonu
+builder.Services.AddDbContext<UserIdentityDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
+
+// Swagger eklemeleri
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -62,7 +79,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 app.UseCookiePolicy();

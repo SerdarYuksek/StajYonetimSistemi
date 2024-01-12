@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SurveyService.Api.Context;
-using SurveyService.Api.Model;
-using SurveyService.Api.Services;
+﻿using Domain.Models;
+using Microsoft.AspNetCore.Mvc;
+using Persistence.Context;
+using Persistence.Repository;
 using X.PagedList;
 
 namespace SurveyService.Api.Controllers

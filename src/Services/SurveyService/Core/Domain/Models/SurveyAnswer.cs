@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SurveyService.Api.Model
+namespace Domain.Models
 {
-    // Survey Servicesindeki SurveyAnswer Tablosunun Entityleri
+    // SurveyAnswer Tablosunun Entityleri
     public class SurveyAnswer
     {
         [Key]

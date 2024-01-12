@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SurveyService.Api.Context;
+using Persistence.Context;
 
 #nullable disable
 
-namespace SurveyService.Api.Migrations
+namespace Persistence.Migrations
 {
     [DbContext(typeof(SurveyDbContext))]
     partial class SurveyDbContextModelSnapshot : ModelSnapshot
@@ -21,7 +21,7 @@ namespace SurveyService.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SurveyService.Api.Model.SurveyAnswer", b =>
+            modelBuilder.Entity("Domain.Models.SurveyAnswer", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace SurveyService.Api.Migrations
                     b.ToTable("surveyAnswers");
                 });
 
-            modelBuilder.Entity("SurveyService.Api.Model.SurveyQuestion", b =>
+            modelBuilder.Entity("Domain.Models.SurveyQuestion", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()

@@ -24,6 +24,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
+    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
 })
 .AddEntityFrameworkStores<UserIdentityDbContext>()
 .AddDefaultTokenProviders();
@@ -42,7 +45,7 @@ builder.Services.AddAuthentication(x =>
     o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     o.Cookie.SameSite = SameSiteMode.Strict;
 })
-.AddJwtBearer(o =>
+.AddJwtBearer("Bearer", o =>
 {
     o.RequireHttpsMetadata = false;
     o.SaveToken = true;

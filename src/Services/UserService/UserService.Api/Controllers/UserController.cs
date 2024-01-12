@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using UserService.Api.Context;
 using UserService.Api.Model;
 using UserService.Api.Services;
 using X.PagedList;
@@ -13,13 +12,11 @@ namespace UserService.Api.Controllers
     public class UserController : ControllerBase
     {
         //Generic Classta yapılan CRUD işlemleri ve Identity kütüphanesi için nesneler oluşturuldu 
-        private UserIdentityDbContext DBContext;
         private CrudGenericRepository<AppUser> _userGenericRepo;
 
         //Oluşturulan nesneler constructırda tanımlandı
-        public UserController(UserIdentityDbContext dbContext, CrudGenericRepository<AppUser> userGenericRepo)
+        public UserController(CrudGenericRepository<AppUser> userGenericRepo)
         {
-            DBContext = dbContext;
             _userGenericRepo = userGenericRepo;
         }
 

@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<SurveyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<SurveyDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Connection")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

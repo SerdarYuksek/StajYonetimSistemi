@@ -6,6 +6,7 @@ using UserService.Api.Model;
 
 namespace UserService.Api.Services
 {
+
     //Kullanıcı bilgilerine göre token üreten fonksiyonun interfacesi
     public interface ITokenInterface
     {
@@ -15,8 +16,15 @@ namespace UserService.Api.Services
 
     public class TokenRepository : ITokenInterface
     {
+        private CrudGenericRepository<AppUser> _userGenericRepo;
+
+        public TokenRepository(CrudGenericRepository<AppUser> userGenericRepo)
+        {
+            _userGenericRepo = userGenericRepo;
+        }
+
         //Kullanıcının oturum açma ve oturumda kalmasını sağlayan tokenın üretilme fonsiyonu 
-        public async Task<string> GenerateJwtToken(string role, AppUser user, IConfiguration configuration)
+        public async Task<string>? GenerateJwtToken(string role, AppUser user, IConfiguration configuration)
         {
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"]));
@@ -38,7 +46,8 @@ namespace UserService.Api.Services
             JwtSecurityTokenHandler tokenHandler = new();
             var AccessToken = tokenHandler.CreateToken(tokenDescriptor);  //Token Oluşturma
 
-            user.Token = AccessToken.ToString(); //Oluşturulan Tokenı modele kaydetme
+            _userGenericRepo.UTokenSave(user, AccessToken.ToString());
+
 
             return await Task.FromResult(tokenHandler.WriteToken(AccessToken));
 

@@ -19,6 +19,4 @@ NotificationService			-> Console App
 -Intern					   ---MsSql---
 -File					   ---MongonDB---
 -Image					   ---MongonDB---
--survey					   ---MsSql---
--Identity
--Notification
+-survey					   ---PostgreSQL---

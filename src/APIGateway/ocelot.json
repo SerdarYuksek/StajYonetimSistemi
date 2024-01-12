@@ -1,23 +1,105 @@
 {
-
-  {
-    "Routes": [
-      {
-        "DownstreamPathTemplate": "/todos/{id}",
-        "DownstreamScheme": "https",
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/User/{everything}",
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
-            "Host": "jsonplaceholder.typicode.com",
-            "Port": 443
+            "Host": "localhost",
+            "Port": 2001
           }
         ],
-        "UpstreamPathTemplate": "/todos/{id}",
-        "UpstreamHttpMethod": [ "Get" ]
+        "UpstreamPathTemplate": "/User/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Delete", "Put" ],
+        "UpstreamScheme": "http"
       }
-    ],
-    "GlobalConfiguration": {
-      "BaseUrl": "https://localhost:5000"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Account/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 2001
+        }
+      ],
+      "UpstreamPathTemplate": "/Account/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Intern/{everything}",
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [],
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 2002
+          }
+        ],
+        "UpstreamPathTemplate": "/Intern/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+        "UpstreamScheme": "http"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Image/{everything}",
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [],
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 2003
+          }
+        ],
+        "UpstreamPathTemplate": "/Image/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
+        "UpstreamScheme": "http"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/File/{everything}",
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [],
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 2004
+          }
+        ],
+        "UpstreamPathTemplate": "/File/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
+        "UpstreamScheme": "http"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Survey/{everything}",
+      "DownstreamScheme": "http",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [],
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 2005
+          }
+        ],
+        "UpstreamPathTemplate": "/Survey/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+        "UpstreamScheme": "http"
+      }
     }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:2000"
   }
-
 }

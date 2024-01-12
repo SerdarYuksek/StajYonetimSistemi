@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserService.Api.Context;
+using UserService.Api.Model;
 
 namespace UserService.Api.Services
 {
@@ -11,6 +12,7 @@ namespace UserService.Api.Services
         void UUpdate(T t);
         List<T> UGetListAll();
         T UGetById(int id);
+        void UTokenSave(AppUser appUser, string token);
     }
 
     //User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
@@ -50,6 +52,11 @@ namespace UserService.Api.Services
         {
             values.Update(t);
             _dbContext.SaveChanges();
+        }
+
+        public void UTokenSave(AppUser appUser, string token)
+        {
+            appUser.Token = token;
         }
     }
 

@@ -35,22 +35,24 @@ namespace SurveyService.Api.Controllers
         [HttpPost("AddQuestion")]
         public IActionResult AddQuestion(SurveyQuestion s)
         {
-            var lastQuestionNumber = surveyQuestionGenericRepo.SGetListAll().Max(x => x.QuestionNumber);
+            var allQuestions = surveyQuestionGenericRepo.SGetListAll();
 
-            if (lastQuestionNumber == 0)
+            // Veritabanında soru varsa eğer son numarayı atıyoruz
+            if (allQuestions.Any())
             {
+                var lastQuestionNumber = allQuestions.Max(x => x.QuestionNumber);
                 s.QuestionNumber = lastQuestionNumber + 1;
-                surveyQuestionGenericRepo.SAdd(s);
-                return Ok(new { Message = "Anket Sorusu oluşturuldu." });
             }
             else
             {
-
-                s.QuestionNumber = lastQuestionNumber + 1;
-                surveyQuestionGenericRepo.SAdd(s);
-                return Ok(new { Message = "Anket Sorusu oluşturuldu." });
+                // Eğer hiç soru yoksa, soru numarasını 1 olarak ayarlayın.
+                s.QuestionNumber = 1;
             }
+
+            surveyQuestionGenericRepo.SAdd(s);
+            return Ok(new { Message = "Anket Sorusu oluşturuldu." });
         }
+
 
         //Anket Sorusu silinecekse
         [HttpDelete("QuestionDelete{id}")]

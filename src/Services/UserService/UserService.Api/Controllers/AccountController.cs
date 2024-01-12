@@ -89,7 +89,7 @@ namespace UserService.Api.Controllers
         [HttpGet("UserSignIn")]
         public IActionResult UserSıgnIn()
         {
-            return Ok(new { Message = "giriş sayfası ekrana geldi" });
+            return Ok(new { Message = "Giriş sayfası ekrana geldi" });
         }
 
         //Kullanıcı giriş ekranından gelen bilgiler ve rol bilgisine göre kullanıcının sisteme giriş yapması
@@ -98,16 +98,16 @@ namespace UserService.Api.Controllers
         {
             var user = await _userManager.FindByIdAsync(loginView.Id.ToString());
 
-            if (user.Role == "test") //rol ve personel onayı kontrolü
+
+            if (user.Role == "Personal" && user.PersonalNo == loginView.PersonalNo) //rol ve personel onayı kontrolü
             {
-                loginView.UserName = loginView.PersonalNo;
-                var personalResult = await _signInManager.PasswordSignInAsync(loginView.UserName, loginView.Password, false, false); //Personel bilgilerinin kontrolü
+                var personalResult = await _signInManager.PasswordSignInAsync(user, loginView.Password, false, false); //Personel bilgilerinin kontrolü
                 return personalResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(user.Role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
 
             }
-            else if (user.Role == "Student" && user.RegistrationCheck == true) //rol ve personel onayı kontrolü
+            else if (user.Role == "Student" && user.RegistrationCheck == true && user.StudentNo == loginView.StudentNo) //rol ve personel onayı kontrolü
             {
-                loginView.UserName = loginView.StudentNo;
+
                 var studentResult = await _signInManager.PasswordSignInAsync(loginView.StudentNo, loginView.Password, false, true); //Student bilgilerinin kontrolü
                 return studentResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(user.Role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
             }

@@ -27,7 +27,14 @@ namespace StajYonetimGUI.Controllers
         {
             return View();
         }
-
+        public IActionResult InternPage()
+        {
+            return View();
+        }
+        public IActionResult Anket()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

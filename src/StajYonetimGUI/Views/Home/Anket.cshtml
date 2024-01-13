@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/css/anket.css" rel="stylesheet" />
+    <title>Anket Sistemi</title>
+</head>
+<body>
+
+    <div id="anket-container">
+        <div id="soru-container">
+            <div id="soru-sayisi">Soru 1:</div>
+            <div id="soru-metni">Bu bir örnek sorudur?</div>
+        </div>
+        <div id="cevap-container">
+            <input type="radio" name="cevap" value="evet"> Evet
+            <input type="radio" name="cevap" value="hayir"> Hayır
+        </div>
+        <button onclick="oncekiSoruyaGit()">Önceki Soru</button>
+        <button onclick="sonrakiSoruyaGit()">Sonraki Soru</button>
+        
+    </div>
+    <br />
+    <div>
+        <button id="gonder-button" onclick="gonderButonu()">Gönder</button>
+    </div>
+   
+
+
+    <script src="~/js/anket.js"></script>
+</body>
+</html>

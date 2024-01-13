@@ -1,0 +1,63 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#anket-container {
+    background-color: cadetblue; /* Koyu mavi renk */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Gölge */
+}
+
+#soru-container {
+    margin-bottom: 20px;
+}
+
+#soru-sayisi {
+    font-weight: bold;
+    color: #fff; /* Soru sayısının rengi */
+}
+
+#soru-metni {
+    color: #fff; /* Soru metni rengi */
+}
+
+#cevap-container {
+    margin-bottom: 20px;
+}
+
+input[type="radio"] {
+    margin-right: 5px;
+    color: #fff; /* Evet/Hayır metin rengi */
+}
+
+.cevap-container {
+    color: white; /* Evet/Hayır metin rengi */
+}
+
+button {
+    padding: 10px;
+    background-color: #001f3f; /* Buton rengi */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+    button:hover {
+        background-color: #2980b9; /* Buton hover rengi */
+    }
+
+    /* Add space above the "Gönder" button */
+    button#gonder-button {
+        margin-top: 15px;
+        width:250px;
+    }

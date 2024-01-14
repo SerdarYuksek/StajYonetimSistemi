@@ -67,4 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function stajyerGuncelle(adi) {
         // Seçilen stajyeri güncelleme iþlemlerini gerçekleþtirin
-        alert("Stajyer Güncelle: " + ad
+        alert("Stajyer Güncelle: " + ad)
+    }
+})

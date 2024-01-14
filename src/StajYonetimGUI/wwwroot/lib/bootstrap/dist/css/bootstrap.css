@@ -3866,11 +3866,15 @@ textarea.form-control-lg {
 }
 
 .nav {
-  display: flex;
-  flex-wrap: wrap;
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    position: fixed;
+    width: 100%; /* Navbar'ın sayfa genişliğinde olmasını sağlar */
+    background-color: #fff; /* Navbar'ın arka plan rengi, isteğe bağlı */
+    z-index: 1000; /* Eğer sayfa içeriğinizde farklı z-index değerleri varsa, bu değeri ayarlayarak navbar'ı en üstte tutabilirsiniz */
 }
 
 .nav-link {

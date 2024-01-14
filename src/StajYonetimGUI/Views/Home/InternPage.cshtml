@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stajyer Yönetim Sistemi</title>
+    <link href="~/css/intern.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="container">
+        <img src="~/images/logoısubü.png" />
+        <h2>Stajyer Yönetim Sistemi</h2>
+
+        <form id="stajyerForm">
+            <label for="stajyerAdi">Stajyer Adı :</label>
+            <input type="text" id="stajyerAdi" required>
+
+            <label for="stajyerSoyadi">Stajyer Soyadı :</label>
+            <input type="text" id="stajyerSoyadi" required>
+
+            <label for="stajyerNumarasi">Stajyer Numarası :</label>
+            <input type="text" id="stajyerNumarasi" required>
+
+            <label for="stajyerBolum">Stajyer Bölümü :</label>
+            <input type="text" id="stajyerBolum" required>
+
+            <label for="stajyerFirma">Stajyer Firma Adı :</label>
+            <input type="text" id="stajyerFirma" required>
+
+            <label for="stajBaslamaTarihi">Staj Başlama Tarihi :</label>
+            <input type="date" id="stajBaslamaTarihi" required>
+
+            <label for="stajBitisTarihi">Staj Bitiş Tarihi :</label>
+            <input type="date" id="stajBitisTarihi" required>
+
+            <br />
+            <button type="button" onclick="stajyerEkle()">Stajyer Ekle</button>
+        </form>
+
+        <h2>Stajyer Listesi</h2>
+        <table id="stajyerListesi">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Numara</th>
+                    <th>Bölüm</th>
+                    <th>Firma Adı</th>
+                    <th>Başlama Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Kabul Gün Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="stajyerlist">
+                <!-- Stajyer listesi burada dinamik olarak oluşturulacak -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="~/js/intern.js"></script>
+</body>
+</html>

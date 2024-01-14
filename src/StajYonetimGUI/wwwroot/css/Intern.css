@@ -1,0 +1,96 @@
+﻿body {
+    background-color: #ecf0f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+h2{
+    text-align:center;
+}
+.container {
+    
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #3498db; /* Mavi renk */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white;
+    margin-top: 200px;
+    background-color: cadetblue; /* Mavi renk */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+label {
+    margin-left: 0px;
+    
+}
+
+input, select {
+    padding: 8px;
+    color: #3498db; /* Mavi renk */
+    border-radius: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+button {
+    background-color: #001f3f; /* Koyu mavi renk */
+    color: white; /* Beyaz renk */
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    button:hover {
+        background-color: #003366; /* Hafif ton değişimi için hover rengi */
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #001f3f; /* Koyu mavi renk */
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #001f3f; /* Koyu mavi renk */
+}
+
+input[type="date"] {
+    width: calc(100% - 16px);
+}
+
+input[type="number"] {
+    width: calc(100% - 16px);
+}
+
+.stajyerlist {
+    color: black;
+}
+
+img {
+    display: block;
+    margin: auto;
+    position: center;
+    height: 250px;
+    width: 250px;
+}

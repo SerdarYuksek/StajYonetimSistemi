@@ -1,0 +1,77 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: lightsteelblue;
+    background-position: center;
+    color: #333; /* Metin rengi */
+}
+
+.container {
+    max-width: 800px; /* Increase the width to 800px */
+    margin: 30px auto; /* Sayfa ortasında hizalamak için */
+    padding: 30px; /* İçeriği çevreleyen padding */
+    background-color: cadetblue; /* Box'un rengi */
+    border-radius: 10px; /* Köşeleri yuvarlamak için */
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+/* Inputları ovalleştirmek için */
+input[type="text"] {
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ekle butonunu genişletmek için */
+input[type="button"] {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #001f3f;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 10px; /* Add margin-top for spacing */
+}
+
+label {
+    margin-bottom: 8px; /* Adjust the value according to your preference */
+}
+
+/* Liste elementlerini düzenlemek için */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #001f3f;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%; /* Resmin maksimum genişliği */
+    height: auto;
+}

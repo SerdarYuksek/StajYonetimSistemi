@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StajYonetimGUI", "src\StajY
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SurveyService", "SurveyService", "{366F5044-D23D-4F3E-BA79-854D7D8A48F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyService.Api", "src\Services\SurveyService\SurveyService.Api\SurveyService.Api.csproj", "{34887F23-40A9-49A6-A6DC-E819E58D18A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurveyService.Api", "src\Services\SurveyService\SurveyService.Api\SurveyService.Api.csproj", "{34887F23-40A9-49A6-A6DC-E819E58D18A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

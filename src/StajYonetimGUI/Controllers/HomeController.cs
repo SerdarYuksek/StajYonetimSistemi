@@ -6,23 +6,40 @@ namespace StajYonetimGUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+       
 
-        public IActionResult Index()
+       
+        public IActionResult Loginpage()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult AdminPanel()
         {
             return View();
         }
-
+        public IActionResult UserPage()
+        {
+            return View();
+        }
+        public IActionResult InternPage()
+        {
+            return View();
+        }
+        public IActionResult Anket()
+        {
+            return View();
+        }
+        public IActionResult File()
+        {
+            return View();
+        }
+        public IActionResult image()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -4,146 +4,77 @@
     <meta charset="UTF-8">
     <title>Personel-Öğrenci Bilgileri</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: lightsteelblue;
-            background-position: center;
-            color: #333; /* Metin rengi */
-        }
-
-        .container {
-            max-width: 400px; /* Box'un maksimum genişliği */
-            margin: 30px auto; /* Sayfa ortasında hizalamak için */
-            padding: 30px; /* İçeriği çevreleyen padding */
-            background-color: #f4f4f4; /* Box'un rengi */
-            border-radius: 10px; /* Köşeleri yuvarlamak için */
-        }
-
-        h2 {
-            margin-bottom: 10px;
-        }
-
-        /* Inputları ovalleştirmek için */
-        input[type="text"] {
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Ekle butonunu genişletmek için */
-        input[type="button"] {
-            padding: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Liste elementlerini düzenlemek için */
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-
-        button {
-            padding: 5px 10px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link href="~/css/user.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <img src="~/images/logoısubü.png" height="200" width="200" />
-        <h2>Personel ve Öğrenci Ekleme Formu</h2>
+        <h2>Personel Ekleme Formu</h2>
         <form id="personelForm" action="submit.php" method="post">
-           
             <label for="ad">Ad:</label>
             <input type="text" id="ad" name="ad" placeholder="Adınızı giriniz"><br><br>
 
             <label for="soyad">Soyad:</label>
             <input type="text" id="soyad" name="soyad" placeholder="Soyadınızı giriniz"><br><br>
 
-            <label for="id">ID:</label>
-            <input type="text" id="id" name="id" placeholder="ID'nizi giriniz"><br><br>
+            <label for="tcno">TC No:</label>
+            <input type="text" id="tcno" name="tcno" placeholder="TC No'nuzu giriniz"><br><br>
 
-            <input type="button" value="Ekle" onclick="eklePersonel()">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Email adresinizi giriniz"><br><br>
+
+            <label for="gender">Cinsiyet:</label>
+            <input type="text" id="gender" name="gender" placeholder="Cinsiyetinizi giriniz"><br><br>
+
+            <label for="personalNo">Personel No:</label>
+            <input type="text" id="personalNo" name="personalNo" placeholder="Personel No'nuzu giriniz"><br><br>
+
+            <label for="tittle">Ünvan:</label>
+            <input type="text" id="title" name="tittle" placeholder="Ünvanınızı giriniz"><br><br>
+
+            <input type="button" value="Personel Ekle" onclick="eklePersonel()">
         </form>
+        <br />
 
-        <h2>Liste</h2>
+        <h2>Öğrenci Ekleme Formu</h2>
+        <form id="ogrenciForm" action="submit.php" method="post">
+            <label for="ad">Ad:</label>
+            <input type="text" id="ad" name="ad" placeholder="Adınızı giriniz"><br><br>
+
+            <label for="soyad">Soyad:</label>
+            <input type="text" id="soyad" name="soyad" placeholder="Soyadınızı giriniz"><br><br>
+
+            <label for="tcno">TC No:</label>
+            <input type="text" id="tcno" name="tcno" placeholder="TC No'nuzu giriniz"><br><br>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Email adresinizi giriniz"><br><br>
+
+            <label for="gender">Cinsiyet:</label>
+            <input type="text" id="gender" name="gender" placeholder="Cinsiyetinizi giriniz"><br><br>
+
+            <label for="studentNo">Öğrenci No:</label>
+            <input type="text" id="studentNo" name="studentNo" placeholder="Öğrenci No'nuzu giriniz"><br><br>
+
+            <label for="class">Sınıf:</label>
+            <input type="text" id="class" name="class" placeholder="Sınıfınızı giriniz"><br><br>
+
+            <input type="button" value="Öğrenci Ekle" onclick="ekleOgrenci()"><br /><br />
+            <!-- Listele buttons -->
+            <div>
+                <button onclick="listelePersonel()">Personel Listele</button>
+                <button onclick="listeleOgrenci()">Öğrenci Listele</button>
+            </div>
+           
+        </form>
+        <br />
+
+        <h2>Listele</h2>
         <ul id="liste"></ul>
+
+       
     </div>
 
-    <script>
-        let personelListesi = [];
-
-        function eklePersonel() {
-            const ad = document.getElementById('ad').value;
-            const soyad = document.getElementById('soyad').value;
-            const id = document.getElementById('id').value;
-
-            const yeniPersonel = {
-                ad: ad,
-                soyad: soyad,
-                id: id
-            };
-
-            personelListesi.push(yeniPersonel);
-            resetForm();
-            listele();
-        }
-
-        function resetForm() {
-            document.getElementById('ad').value = '';
-            document.getElementById('soyad').value = '';
-            document.getElementById('id').value = '';
-        }
-
-        function listele() {
-            const listeElementi = document.getElementById('liste');
-            listeElementi.innerHTML = '';
-
-            personelListesi.forEach(function (personel, index) {
-                const li = document.createElement('li');
-                li.appendChild(document.createTextNode(`${personel.ad} ${personel.soyad} - ID: ${personel.id}`));
-
-                const silButton = document.createElement('button');
-                silButton.appendChild(document.createTextNode('Sil'));
-                silButton.onclick = function () {
-                    personelListesi.splice(index, 1);
-                    listele();
-                };
-                li.appendChild(silButton);
-
-                const guncelleButton = document.createElement('button');
-                guncelleButton.appendChild(document.createTextNode('Güncelle'));
-                guncelleButton.onclick = function () {
-                    document.getElementById('ad').value = personel.ad;
-                    document.getElementById('soyad').value = personel.soyad;
-                    document.getElementById('id').value = personel.id;
-
-                    personelListesi.splice(index, 1);
-                    listele();
-                };
-                li.appendChild(guncelleButton);
-
-                listeElementi.appendChild(li);
-            });
-        }
-    </script>
+    <script src="~/js/user.js"></script>
 </body>
 </html>

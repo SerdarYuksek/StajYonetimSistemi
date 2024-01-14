@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dosya Yönetim Sistemi</title>
+    <link href="~/css/file.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <img src="~/images/logoısubü.png" />
+        <h1>Dosya Yönetim Sistemi</h1>
+
+        <input type="file" id="fileInput" />
+        <button onclick="dosyaYukle()">Dosya Yükle</button>
+
+        <h2>Dosya Listesi</h2>
+        <ul id="fileList"></ul>
+
+        <h2>Dosya Görüntüleyici</h2>
+        <div id="fileViewer"></div>
+
+        <button onclick="dosyaSil()">Seçili Dosyayı Sil</button>
+    </div>
+    <script src="~/js/file.js"></script>
+  
+</body>
+</html>

@@ -6,12 +6,9 @@ namespace StajYonetimGUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+       
 
        
         public IActionResult Loginpage()
@@ -32,6 +29,14 @@ namespace StajYonetimGUI.Controllers
             return View();
         }
         public IActionResult Anket()
+        {
+            return View();
+        }
+        public IActionResult File()
+        {
+            return View();
+        }
+        public IActionResult image()
         {
             return View();
         }

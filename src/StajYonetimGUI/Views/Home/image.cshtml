@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resim Yönetim Sistemi</title>
+    <link href="~/css/image.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <h1>Resim Yönetim Sistemi</h1>
+
+        <!-- Save Image -->
+        <div class="image-section">
+            <h2>Resim Yükle</h2>
+            <input type="file" id="imageInput" />
+            <button onclick="saveImage()">Save Image</button>
+        </div>
+
+        <!-- Update Image -->
+        <div class="image-section">
+            <h2>Resim Güncelle</h2>
+            <input type="file" id="updateImageInput" />
+            <button onclick="updateImage()">Update Image</button>
+        </div>
+
+        <!-- Delete Image -->
+        <div class="image-section">
+            <h2>Resim Sil</h2>
+            <select id="deleteImageSelect">
+                <!-- Image options dynamically added here -->
+            </select>
+            <button onclick="deleteImage()">Delete Image</button>
+        </div>
+
+        <!-- Image List -->
+        <div class="image-section">
+            <h2>Resim Listele</h2>
+            <ul id="imageList"></ul>
+        </div>
+    </div>
+
+    <script src="~/js/image.js"></script>
+</body>
+</html>

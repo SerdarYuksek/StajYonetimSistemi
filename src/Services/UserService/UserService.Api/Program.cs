@@ -1,12 +1,14 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+ï»¿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
 using UserService.Api.Context;
 using UserService.Api.Model;
 using UserService.Api.Service;
 using UserService.Api.Services;
+using UserService.Api.Services.UserService.Api.Services;
 using UserService.Api.ValidationRules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,10 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 
-// Identity konfigürasyonu
+// Identity konfigÃ¼rasyonu
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
-    // Þifre politikalarýný yapýlandýrma
+    // Ãžifre politikalarÃ½nÃ½ yapÃ½landÃ½rma
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 1;
     options.Password.RequireUppercase = false;
@@ -37,15 +39,7 @@ builder.Services.AddAuthentication(x =>
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddCookie("default", o =>
-{
-    o.Cookie.Name = "stajyonetim.Auth";
-    o.Cookie.Expiration = TimeSpan.FromDays(7);
-    o.Cookie.HttpOnly = true;
-    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    o.Cookie.SameSite = SameSiteMode.Strict;
-})
-.AddJwtBearer("Bearer", o =>
+.AddJwtBearer(o =>
 {
     o.RequireHttpsMetadata = false;
     o.SaveToken = true;
@@ -60,13 +54,20 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(a => ConnectionMultiplexer.Connect(new ConfigurationOptions
+{
+    EndPoints = { $"{builder.Configuration.GetValue<string>("Redis:Host")}:{builder.Configuration.GetValue<int>("Redis:Port")}" }
+}));
+
 // Dependency Injection
 builder.Services.AddScoped<EMailRepository>();
 builder.Services.AddScoped<UserRegisterValidation>();
 builder.Services.AddScoped<TokenRepository>();
 builder.Services.AddScoped<CrudGenericRepository<AppUser>>();
+builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddScoped<IDatabaseAsync>(_ => _.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 
-// DbContext konfigürasyonu
+// DbContext konfigÃ¼rasyonu
 builder.Services.AddDbContext<UserIdentityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Connection")));
 

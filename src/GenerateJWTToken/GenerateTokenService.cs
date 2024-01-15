@@ -1,15 +1,15 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using UserService.Api.Model;
+using UserService.Api.Services;
 
-namespace UserService.Api.Services
+namespace GenerateJWTToken
 {
-
-    namespace UserService.Api.Services
+    public class GenerateTokenService
     {
-
         //Kullanıcı bilgilerine göre token üreten fonksiyonun interfacesi
         public interface ITokenInterface
         {
@@ -51,10 +51,10 @@ namespace UserService.Api.Services
 
                 _userGenericRepo.UTokenSave(user, AccessToken.ToString());
 
+
                 return await Task.FromResult(tokenHandler.WriteToken(AccessToken));
 
             }
         }
     }
 }
-

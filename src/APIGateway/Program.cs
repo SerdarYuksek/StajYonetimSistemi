@@ -10,9 +10,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-                   .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-                   .AddEnvironmentVariables();
-builder.Services.AddOcelot(builder.Configuration);
+               .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
+               .AddEnvironmentVariables();
+builder.Services.AddOcelot();
 
 var app = builder.Build();
 
@@ -29,7 +29,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Ocelot'u kullan
-await app.UseOcelot();
+app.UseOcelot().Wait();
 
 app.MapControllers();
 app.Run();

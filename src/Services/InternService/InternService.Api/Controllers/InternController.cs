@@ -1,6 +1,7 @@
 ﻿using InternService.Api.Context;
 using InternService.Api.Model;
 using InternService.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -8,6 +9,7 @@ namespace InternService.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class InternController : ControllerBase
     {
         //Generic Classta yapılan CRUD işlemleri bir entitye tanımlayıp nesne oluşturuldu 

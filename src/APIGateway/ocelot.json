@@ -3,9 +3,6 @@
     {
       "DownstreamPathTemplate": "/api/User/{everything}",
       "DownstreamScheme": "http",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
@@ -15,7 +12,7 @@
         "UpstreamPathTemplate": "/User/{everything}",
         "UpstreamHttpMethod": [ "Get", "Delete", "Put" ],
         "UpstreamScheme": "http"
-      }
+      
     },
     {
       "DownstreamPathTemplate": "/api/Account/{everything}",
@@ -33,9 +30,6 @@
     {
       "DownstreamPathTemplate": "/api/Intern/{everything}",
       "DownstreamScheme": "http",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
@@ -45,14 +39,11 @@
         "UpstreamPathTemplate": "/Intern/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
         "UpstreamScheme": "http"
-      }
+      
     },
     {
       "DownstreamPathTemplate": "/api/Image/{everything}",
       "DownstreamScheme": "http",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
@@ -62,14 +53,11 @@
         "UpstreamPathTemplate": "/Image/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
         "UpstreamScheme": "http"
-      }
+      
     },
     {
       "DownstreamPathTemplate": "/api/File/{everything}",
       "DownstreamScheme": "http",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
@@ -79,14 +67,11 @@
         "UpstreamPathTemplate": "/File/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
         "UpstreamScheme": "http"
-      }
+      
     },
     {
       "DownstreamPathTemplate": "/api/Survey/{everything}",
       "DownstreamScheme": "http",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": [],
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
@@ -96,7 +81,6 @@
         "UpstreamPathTemplate": "/Survey/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
         "UpstreamScheme": "http"
-      }
     }
   ],
   "GlobalConfiguration": {

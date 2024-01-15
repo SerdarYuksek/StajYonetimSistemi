@@ -4,6 +4,7 @@ using InternService.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternService.Api.Migrations
 {
     [DbContext(typeof(InternDbContext))]
-    partial class InternDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240115005807_mig4")]
+    partial class mig4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +96,7 @@ namespace InternService.Api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("internInfos", (string)null);
+                    b.ToTable("internInfos");
                 });
 
             modelBuilder.Entity("InternService.Api.Model.InternStatus", b =>
@@ -126,7 +129,7 @@ namespace InternService.Api.Migrations
 
                     b.HasIndex("InternStatusId");
 
-                    b.ToTable("internStatuses", (string)null);
+                    b.ToTable("internStatuses");
                 });
 
             modelBuilder.Entity("InternService.Api.Model.InternStatus", b =>

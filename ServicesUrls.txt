@@ -10,7 +10,6 @@ FileService.Api				-> http://localhost:2003
 ImageService.Api			-> http://localhost:2004
 SurveyService.Api			-> http://localhost:2005
 
-NotificationService			-> Console App
 
 
 

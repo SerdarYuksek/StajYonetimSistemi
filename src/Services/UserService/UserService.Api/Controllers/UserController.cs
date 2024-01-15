@@ -12,7 +12,8 @@ namespace UserService.Api.Controllers
     public class UserController : ControllerBase
     {
         //Generic Classta yapılan CRUD işlemleri ve Identity kütüphanesi için nesneler oluşturuldu 
-        private CrudGenericRepository<AppUser> _userGenericRepo;
+        private readonly CrudGenericRepository<AppUser> _userGenericRepo;
+
 
         //Oluşturulan nesneler constructırda tanımlandı
         public UserController(CrudGenericRepository<AppUser> userGenericRepo)
@@ -129,6 +130,36 @@ namespace UserService.Api.Controllers
 
             // Bir değer gelmediği zamanki hata mesajı.
             return BadRequest("Gelen user değerleri boş.");
+        }
+
+        // Öğrenci kaydı onaylanacaksa
+        [HttpPut("RegistrationConfirm/{id}")]
+        public IActionResult RegistrationConfirm(int id)
+        {
+            var user = _userGenericRepo.UGetById(id);
+
+            if (user != null)
+            {
+                _userGenericRepo.UGetConfirm(user);
+                return Ok(new { Message = "Öğrenci Kaydı onaylandı." });
+            }
+
+            return BadRequest(new { Message = "Öğrenci kaydı bulunamadı." });
+        }
+
+        //Öğrenci kaydı onaylanmazsa
+        [HttpPut("RegistrationDecline/{id}")]
+        public IActionResult RegistrationDecline(int id)
+        {
+            var user = _userGenericRepo.UGetById(id);
+
+            if (user != null)
+            {
+                _userGenericRepo.UGetConfirmDecline(user);
+                return Ok(new { Message = "Öğrenci onaylanmadı." });
+            }
+
+            return BadRequest(new { Message = "Öğrenci kaydı bulunamadı." });
         }
     }
 }

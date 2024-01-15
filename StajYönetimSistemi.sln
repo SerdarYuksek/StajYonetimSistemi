@@ -42,13 +42,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5E730B30-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{CB2C6E96-6565-47EE-888B-E2DF0E347EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "src\Services\SurveyService\Infrastructure\Persistence\Persistence.csproj", "{6B3E05A8-4404-48B9-A2B1-E9BA7AC225E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Services\SurveyService\Infrastructure\Persistence\Persistence.csproj", "{6B3E05A8-4404-48B9-A2B1-E9BA7AC225E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{A4F0CAAB-F811-4671-9C5D-6797C4C449D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Services\SurveyService\Core\Domain\Domain.csproj", "{A2BA9ED0-BA16-48DA-90EF-F125D395ADDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Services\SurveyService\Core\Domain\Domain.csproj", "{A2BA9ED0-BA16-48DA-90EF-F125D395ADDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Services\SurveyService\Core\Application\Application.csproj", "{0C7097AE-D2FE-43C6-BF7B-756F6C7388C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Services\SurveyService\Core\Application\Application.csproj", "{0C7097AE-D2FE-43C6-BF7B-756F6C7388C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

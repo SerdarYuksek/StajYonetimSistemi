@@ -1,11 +1,13 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using UserService.Api.Model;
 using UserService.Api.Service;
 using UserService.Api.Services;
+using UserService.Api.Services.UserService.Api.Services;
 using UserService.Api.ValidationRules;
 
 namespace UserService.Api.Controllers
@@ -20,18 +22,20 @@ namespace UserService.Api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly UserRegisterValidation _validationRules;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly CrudGenericRepository<AppUser> _userGenericRepo;
         private readonly IConfiguration _configuration;
         private readonly TokenRepository _tokenRepo;
 
         //Account Controllerın Constructerına kullanılmak üzere nesneler dahil edildi
-        public AccountController(EMailRepository eMailRepository, UserManager<AppUser> userManager, UserRegisterValidation validationRules, SignInManager<AppUser> signInManager, IConfiguration configuration, TokenRepository tokenRepo)
+        public AccountController(EMailRepository eMailRepository, UserManager<AppUser> userManager, UserRegisterValidation validationRules, SignInManager<AppUser> signInManager, CrudGenericRepository<AppUser> userGenericRepo, TokenRepository tokenRepo, IConfiguration configuration)
         {
             _eMailRepository = eMailRepository;
             _userManager = userManager;
             _validationRules = validationRules;
             _signInManager = signInManager;
-            _configuration = configuration;
+            _userGenericRepo = userGenericRepo;
             _tokenRepo = tokenRepo;
+            _configuration = configuration;
         }
 
         //Kullanıcı kayıt ekranını getirme
@@ -107,8 +111,7 @@ namespace UserService.Api.Controllers
             }
             else if (user.Role == "Student" && user.RegistrationCheck == true && user.StudentNo == loginView.StudentNo) //rol ve personel onayı kontrolü
             {
-
-                var studentResult = await _signInManager.PasswordSignInAsync(loginView.StudentNo, loginView.Password, false, true); //Student bilgilerinin kontrolü
+                var studentResult = await _signInManager.PasswordSignInAsync(user, loginView.Password, false, true); //Student bilgilerinin kontrolü
                 return studentResult.Succeeded ? Ok(new { token = _tokenRepo.GenerateJwtToken(user.Role, user, _configuration) }) : Unauthorized(); //Oturum kontrolü jwt token ile sağlanmıştır
             }
             else
@@ -122,7 +125,7 @@ namespace UserService.Api.Controllers
         public async Task<IActionResult> UserLogOut()
         {
 
-            await HttpContext.SignOutAsync("stajyonetim.Auth"); //Sistemden çıkış yaptıran ve tutulan cookieleri silme
+            await HttpContext.SignOutAsync(JwtBearerDefaults.AuthenticationScheme); //Sistemden çıkış yaptıran ve tutulan cookieleri silme
 
             return Ok(new { Message = "Çıkış yapıldı." });
         }

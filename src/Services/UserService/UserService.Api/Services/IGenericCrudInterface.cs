@@ -13,6 +13,8 @@ namespace UserService.Api.Services
         List<T> UGetListAll();
         T UGetById(int id);
         void UTokenSave(AppUser appUser, string token);
+        void UGetConfirm(AppUser appUser);
+        void UGetConfirmDecline(AppUser appUser);
     }
 
     //User Servisindeki CRUD İşlemlerin Generic Yapı ile metodların Yazılması ve İnterfacenin implamente edilmesi
@@ -57,6 +59,25 @@ namespace UserService.Api.Services
         public void UTokenSave(AppUser appUser, string token)
         {
             appUser.Token = token;
+            _dbContext.SaveChanges();
+        }
+
+        public void UGetConfirm(AppUser appUser)
+        {
+            if (appUser != null)
+            {
+                appUser.RegistrationCheck = true;
+                _dbContext.SaveChanges();
+            }
+        }
+
+        public void UGetConfirmDecline(AppUser appUser)
+        {
+            if (appUser != null)
+            {
+                appUser.RegistrationCheck = false;
+                _dbContext.SaveChanges();
+            }
         }
     }
 

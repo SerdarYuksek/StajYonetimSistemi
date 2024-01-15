@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InternService.Api.Model
 {
@@ -24,7 +25,9 @@ namespace InternService.Api.Model
         public bool Education { get; set; }
         public string StudentNo { get; set; }
         public int InternStatusId { get; set; }
-        public InternStatus InternStatus { get; set; }
+
+        [ForeignKey("InternStatusId")]
+        public virtual ICollection<InternStatus> InternStatus { get; set; }
     }
 
 }

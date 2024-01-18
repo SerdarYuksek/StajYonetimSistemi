@@ -6,9 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
+               .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
+               .AddEnvironmentVariables();
 builder.Services.AddOcelot();
 
 var app = builder.Build();
@@ -20,24 +23,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-new WebHostBuilder()
-
-           .UseKestrel()
-           .UseContentRoot(Directory.GetCurrentDirectory())
-           .ConfigureAppConfiguration((hostingContext, config) =>
-           {
-               config
-                   .SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-                   .AddJsonFile("ocelot.json")
-                   .AddEnvironmentVariables();
-           });        
-           
-app.UseOcelot().Wait();
-
+// Middleware kayýt sýrasý önemli
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// Ocelot'u kullan
+app.UseOcelot().Wait();
 
+app.MapControllers();
 app.Run();

@@ -47,6 +47,9 @@ namespace InternService.Api.Migrations
                     b.Property<bool>("Holliday")
                         .HasColumnType("bit");
 
+                    b.Property<int>("InternStatusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Mail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -90,7 +93,7 @@ namespace InternService.Api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("internInfos");
+                    b.ToTable("internInfos", (string)null);
                 });
 
             modelBuilder.Entity("InternService.Api.Model.InternStatus", b =>
@@ -104,21 +107,38 @@ namespace InternService.Api.Migrations
                     b.Property<int>("AcceptDay")
                         .HasColumnType("int");
 
-                    b.Property<bool>("ContributConfirm")
+                    b.Property<bool>("AcceptStatus")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("InternAccept")
+                    b.Property<bool>("ConfirmStatus")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("InternConfirm")
+                    b.Property<bool>("ContributStatus")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("InternStatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("RejectReason")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("internStatuses");
+                    b.HasIndex("InternStatusId");
+
+                    b.ToTable("internStatuses", (string)null);
+                });
+
+            modelBuilder.Entity("InternService.Api.Model.InternStatus", b =>
+                {
+                    b.HasOne("InternService.Api.Model.InternInfo", null)
+                        .WithMany("InternStatus")
+                        .HasForeignKey("InternStatusId");
+                });
+
+            modelBuilder.Entity("InternService.Api.Model.InternInfo", b =>
+                {
+                    b.Navigation("InternStatus");
                 });
 #pragma warning restore 612, 618
         }

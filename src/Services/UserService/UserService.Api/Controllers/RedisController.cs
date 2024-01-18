@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using RabbitMq;
 using StackExchange.Redis;
 using UserService.Api.Model;
 using UserService.Api.Services;
@@ -22,74 +23,131 @@ namespace UserService.Api.Controllers
         [HttpGet("SetRedisUnRegistiredStudents")]
         public async Task<IActionResult> SetRedisUnRegistiredStudents()
         {
-            // Redis'e bağlanma komutu (varsayılan olarak 0)
-            _redisService.Connection();
-
-            var Students = _userGenericRepo.UGetListAll().Where(x => x.Role == "Student").ToList();
-
-            foreach (var student in Students)
+            try
             {
-                // Her öğrenci için benzersiz bir anahtar oluştur
-                var redisKey = $"Student:{student.Id}"; // Burada student.Id, öğrenci nesnesinin benzersiz kimliği olmalıdır.
+                // Redis'e bağlanma komutu (varsayılan olarak 0)
+                _redisService.Connection();
 
-                // Eğer registerCheck true ise, Redis'teki kaydı sil
-                if (student.RegistrationCheck == true)
+                // RabbitMQ bağlantısı alınıyor
+                var rabbitMQConnection = RabbitMQConnection.Instance;
+
+                // Publisher ve Consumer sınıfları oluşturuluyor
+                var publisherChannel = rabbitMQConnection.CreateModel();
+                var rabbitMQPublisher = new RabbitMQPublisher(publisherChannel);
+
+                var consumerChannel = rabbitMQConnection.CreateModel();
+                var rabbitMQConsumer = new RabbitMQConsumer(consumerChannel);
+
+                // Mesaj alma
+                rabbitMQConsumer.ConsumeMessages("RedisExchange", "RedisQueue", "RedisRoutingKey", async (message) =>
                 {
-                    await _redisService.Keydelete(redisKey); // Redis'teki kaydı sil
-                }
-                else
-                {
-                    // Sadece belirli alanları içeren bir öğrenci nesnesi oluştur
-                    var redisData = new
+                    var gettingMessage = message;
+
+                    if (gettingMessage != null && gettingMessage.Equals("Sisteme kaydı Onaylanmayan öğrenciler listelendi."))
                     {
-                        student.FirstName,
-                        student.Surname,
-                        student.Class,
-                        student.StudentNo
-                    };
+                        var Students = _userGenericRepo.UGetListAll().Where(x => x.Role == "Student").ToList();
 
-                    // Öğrenciyi Redis'e kaydet
-                    await _redisService.StringSet(redisKey, JsonConvert.SerializeObject(redisData));
-                }
+                        foreach (var student in Students)
+                        {
+                            // Her öğrenci için benzersiz bir anahtar oluştur
+                            var redisKey = $"Student:{student.Id}"; // Burada student.Id, öğrenci nesnesinin benzersiz kimliği olmalıdır.
+
+                            // Eğer registerCheck true ise, Redis'teki kaydı sil
+                            if (student.RegistrationCheck == true)
+                            {
+                                await _redisService.Keydelete(redisKey); // Redis'teki kaydı sil
+                            }
+                            else
+                            {
+                                // Sadece belirli alanları içeren bir öğrenci nesnesi oluştur
+                                var redisData = new
+                                {
+                                    student.FirstName,
+                                    student.Surname,
+                                    student.Class,
+                                    student.StudentNo
+                                };
+
+                                // Öğrenciyi Redis'e kaydet
+                                await _redisService.StringSet(redisKey, JsonConvert.SerializeObject(redisData));
+                            }
+                        }
+                    }
+                });
+
+                // Mesaj gönderme  
+                rabbitMQPublisher.PublishMessage("RedisExchange", "RedisRoutingKey", "Sistem kaydı Onaylanmayan öğrenciler Redis'e başarıyla kaydedildi.");
+                return Ok("Sistem kaydı Onaylanmayan öğrenciler Redis'e başarıyla kaydedildi.");
             }
-            return Ok("Sistem kaydı Onaylanmayan öğrenciler Redis'e başarıyla kaydedildi.");
+            catch (Exception ex)
+            {
+                // Handle exceptions here
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
+
 
         [HttpGet("GetRedisUnRegistiredStudents")]
         public async Task<IActionResult> GetRedisUnRegistiredStudents()
         {
             try
             {
-                var cursor = 0;
-                var unconfirmedStudents = new List<StudentRedisViewModel>();
-                do
+                // Redis'e bağlanma komutu (varsayılan olarak 0)
+                _redisService.Connection();
+
+                // RabbitMQ bağlantısı alınıyor
+                var rabbitMQConnection = RabbitMQConnection.Instance;
+
+                // Publisher ve Consumer sınıfları oluşturuluyor
+                var publisherChannel = rabbitMQConnection.CreateModel();
+                var rabbitMQPublisher = new RabbitMQPublisher(publisherChannel);
+
+                var consumerChannel = rabbitMQConnection.CreateModel();
+                var rabbitMQConsumer = new RabbitMQConsumer(consumerChannel);
+
+                string settingMessage = null;
+
+                // Mesaj Alma
+                rabbitMQConsumer.ConsumeMessages("RedisExchange", "RedisQueue", "RedisRoutingKey", (message) =>
                 {
-                    var scanResult = await _redisService.Database().ExecuteAsync("SCAN", cursor.ToString(), "MATCH", "Student:*", "COUNT", "50");
+                    var settingMessage = message;
+                });
 
-                    cursor = int.Parse((string)scanResult[0]);
-
-                    var keys = (RedisResult[])scanResult[1];
-
-                    foreach (var key in keys)
+                if (settingMessage != null && settingMessage.Equals("Sistem kaydı Onaylanmayan öğrenciler Redis'e başarıyla kaydedildi."))
+                {
+                    var cursor = 0;
+                    var unconfirmedStudents = new List<StudentRedisViewModel>();
+                    do
                     {
-                        var studentJson = await _redisService.StringGet(key.ToString());
+                        var scanResult = await _redisService.Database().ExecuteAsync("SCAN", cursor.ToString(), "MATCH", "Student:*", "COUNT", "50");
 
-                        if (!string.IsNullOrEmpty(studentJson))
+                        cursor = int.Parse((string)scanResult[0]);
+
+                        var keys = (RedisResult[])scanResult[1];
+
+                        foreach (var key in keys)
                         {
-                            var student = JsonConvert.DeserializeObject<StudentRedisViewModel>(studentJson);
-                            unconfirmedStudents.Add(student);
+                            var studentJson = await _redisService.StringGet(key.ToString());
+
+                            if (!string.IsNullOrEmpty(studentJson))
+                            {
+                                var student = JsonConvert.DeserializeObject<StudentRedisViewModel>(studentJson);
+                                unconfirmedStudents.Add(student);
+                            }
                         }
-                    }
-                } while (cursor != 0);
+                    } while (cursor != 0);
 
-                return Ok(unconfirmedStudents);
-
+                    // Mesaj gönderme
+                    rabbitMQPublisher.PublishMessage("RedisExchange", "RedisRoutingKey", "Sisteme kaydı Onaylanmayan öğrenciler listelendi.");
+                    return Ok(unconfirmedStudents);
+                }
             }
             catch (Exception ex)
             {
 
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
+            return Ok("Sistem kaydı Onaylanmayan öğrenciler Redisten başarıyla listelendi.");
         }
 
         [HttpGet("GetRedisUnConfirmedStudents")]

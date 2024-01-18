@@ -33,5 +33,9 @@
     <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\RabbitMq\RabbitMq.csproj" />
+  </ItemGroup>
+
 
 </Project>

@@ -44,8 +44,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StajYonetimGUI", "src\StajY
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SurveyService", "SurveyService", "{366F5044-D23D-4F3E-BA79-854D7D8A48F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyService.Api", "src\Services\SurveyService\SurveyService.Api\SurveyService.Api.csproj", "{34887F23-40A9-49A6-A6DC-E819E58D18A5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,10 +82,6 @@ Global
 		{09B53139-D0A5-4FC1-80C0-610C9AA24080}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09B53139-D0A5-4FC1-80C0-610C9AA24080}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09B53139-D0A5-4FC1-80C0-610C9AA24080}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34887F23-40A9-49A6-A6DC-E819E58D18A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34887F23-40A9-49A6-A6DC-E819E58D18A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34887F23-40A9-49A6-A6DC-E819E58D18A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34887F23-40A9-49A6-A6DC-E819E58D18A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,7 +104,6 @@ Global
 		{9A77EABF-057A-4AE2-A872-C8DBF3745FC3} = {5C9B1E00-5A8D-4BFA-B7AF-9BF93A95BFFB}
 		{09B53139-D0A5-4FC1-80C0-610C9AA24080} = {5C9B1E00-5A8D-4BFA-B7AF-9BF93A95BFFB}
 		{366F5044-D23D-4F3E-BA79-854D7D8A48F5} = {86BF4E62-89A7-481D-A31C-4FF879B2F75D}
-		{34887F23-40A9-49A6-A6DC-E819E58D18A5} = {366F5044-D23D-4F3E-BA79-854D7D8A48F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C8E4828-B0C8-4AD4-8D21-6A3010085D5B}

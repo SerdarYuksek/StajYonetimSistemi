@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   
+    <link href="~/css/admin.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            var data1 = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Work', 11],
+                ['Eat', 2],
+                ['Commute', 2],
+                ['Watch TV', 2],
+                ['Sleep', 7]
+            ]);
+
+            var options1 = {
+                title: 'My Daily Activities 1',
+                is3D: true,
+            };
+
+            var chart1 = new google.visualization.PieChart(document.getElementById('piechart_3d_1'));
+            chart1.draw(data1, options1);
+
+            var data2 = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Study', 5],
+                ['Exercise', 2],
+                ['Socialize', 3],
+                ['Read', 2],
+                ['Relax', 4]
+            ]);
+
+            var options2 = {
+                title: 'My Daily Activities 2',
+                is3D: true,
+            };
+
+            var chart2 = new google.visualization.PieChart(document.getElementById('piechart_3d_2'));
+            chart2.draw(data2, options2);
+        }
+        let currentTable = 1;
+
+        function changeTable() {
+            const tables = document.querySelectorAll('.data-table');
+            tables.forEach(table => {
+                table.classList.add('hide');
+            });
+
+            currentTable++;
+            if (currentTable > tables.length) {
+                currentTable = 1;
+            }
+
+            const nextTable = document.getElementById(`table${currentTable}`);
+            nextTable.classList.remove('hide');
+        }
+    </script>
+</head>
+<body>
+    
+    <div class="chart-container">
+        <div id="piechart_3d_1" class="chart" style="width: 450px; height: 500px;"></div>
+        <div id="piechart_3d_2" class="chart" style="width: 450px; height: 500px;"></div>
+    </div>
+    <div class="table-container">
+        <table id="table1" class="data-table">
+            <caption>Table 1</caption>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+            <tr>
+                <td>John</td>
+                <td>25</td>
+            </tr>
+            <tr>
+                <td>Alice</td>
+                <td>30</td>
+            </tr>
+        </table>
+        <table id="table2" class="data-table hide">
+            <caption>Table 2</caption>
+            <tr>
+                <th>City</th>
+                <th>Country</th>
+            </tr>
+            <tr>
+                <td>New York</td>
+                <td>USA</td>
+            </tr>
+            <tr>
+                <td>London</td>
+                <td>UK</td>
+            </tr>
+        </table>
+        <table id="table3" class="data-table hide">
+            <caption>Table 3</caption>
+            <tr>
+                <th>Food</th>
+                <th>Calories</th>
+            </tr>
+            <tr>
+                <td>Apple</td>
+                <td>52</td>
+            </tr>
+            <tr>
+                <td>Pizza</td>
+                <td>285</td>
+            </tr>
+        </table>
+    </div>
+    <button class="button" onclick="changeTable()">Change Table</button>
+</body>
+</html>

@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personel-Öğrenci Bilgileri</title>
+
+    <link href="~/css/user.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <img src="~/images/logoısubü.png" height="200" width="200" />
+        <h2>Personel Ekleme Formu</h2>
+        <form id="personelForm" action="submit.php" method="post">
+            <label for="ad">Ad:</label>
+            <input type="text" id="ad" name="ad" placeholder="Adınızı giriniz"><br><br>
+
+            <label for="soyad">Soyad:</label>
+            <input type="text" id="soyad" name="soyad" placeholder="Soyadınızı giriniz"><br><br>
+
+            <label for="tcno">TC No:</label>
+            <input type="text" id="tcno" name="tcno" placeholder="TC No'nuzu giriniz"><br><br>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Email adresinizi giriniz"><br><br>
+
+            <label for="gender">Cinsiyet:</label>
+            <input type="text" id="gender" name="gender" placeholder="Cinsiyetinizi giriniz"><br><br>
+
+            <label for="personalNo">Personel No:</label>
+            <input type="text" id="personalNo" name="personalNo" placeholder="Personel No'nuzu giriniz"><br><br>
+
+            <label for="tittle">Ünvan:</label>
+            <input type="text" id="title" name="tittle" placeholder="Ünvanınızı giriniz"><br><br>
+
+            <input type="button" value="Personel Ekle" onclick="eklePersonel()">
+        </form>
+        <br />
+
+        <h2>Öğrenci Ekleme Formu</h2>
+        <form id="ogrenciForm" action="submit.php" method="post">
+            <label for="ad">Ad:</label>
+            <input type="text" id="ad" name="ad" placeholder="Adınızı giriniz"><br><br>
+
+            <label for="soyad">Soyad:</label>
+            <input type="text" id="soyad" name="soyad" placeholder="Soyadınızı giriniz"><br><br>
+
+            <label for="tcno">TC No:</label>
+            <input type="text" id="tcno" name="tcno" placeholder="TC No'nuzu giriniz"><br><br>
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Email adresinizi giriniz"><br><br>
+
+            <label for="gender">Cinsiyet:</label>
+            <input type="text" id="gender" name="gender" placeholder="Cinsiyetinizi giriniz"><br><br>
+
+            <label for="studentNo">Öğrenci No:</label>
+            <input type="text" id="studentNo" name="studentNo" placeholder="Öğrenci No'nuzu giriniz"><br><br>
+
+            <label for="class">Sınıf:</label>
+            <input type="text" id="class" name="class" placeholder="Sınıfınızı giriniz"><br><br>
+
+            <input type="button" value="Öğrenci Ekle" onclick="ekleOgrenci()"><br /><br />
+            <!-- Listele buttons -->
+            <div>
+                <button onclick="listelePersonel()">Personel Listele</button>
+                <button onclick="listeleOgrenci()">Öğrenci Listele</button>
+            </div>
+           
+        </form>
+        <br />
+
+        <h2>Listele</h2>
+        <ul id="liste"></ul>
+
+       
+    </div>
+
+    <script src="~/js/user.js"></script>
+</body>
+</html>

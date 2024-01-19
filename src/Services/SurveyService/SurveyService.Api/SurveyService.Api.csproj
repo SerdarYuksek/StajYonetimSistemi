@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Core\Application\Application.csproj" />
+    <None Include="Core\Domain\Domain.csproj" />
+    <None Include="Infrastructure\Persistence\Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
    
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	  <PackageReference Include="X.PagedList" Version="8.4.7" />

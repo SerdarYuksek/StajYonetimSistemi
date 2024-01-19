@@ -27,7 +27,6 @@ namespace SurveyService.Api.Controllers
         [HttpGet("AddQuestion")]
         public IActionResult AddQuestion()
         {
-
             return Ok();
         }
 
@@ -116,7 +115,7 @@ namespace SurveyService.Api.Controllers
 
         //Anket sorularının kullanıcıya teker teker sunulması
         [HttpGet("ListSurvey")]
-        public IActionResult ListSurvey(int page = 1)
+        public IActionResult ListSurvey(int page)
         {
             var surveyList = surveyQuestionGenericRepo.SGetListAll().ToPagedList(page, 1);
 
@@ -129,7 +128,7 @@ namespace SurveyService.Api.Controllers
             // İlgili sayfadaki soruyu alın
             var currentSurvey = surveyList.FirstOrDefault();
 
-            return Ok(new { CurrentSurvey = currentSurvey, TotalPages = surveyList.PageCount, NextPage = page + 1 });
+            return Ok(new { CurrentSurvey = currentSurvey });
         }
 
 
@@ -138,8 +137,7 @@ namespace SurveyService.Api.Controllers
         public IActionResult AnswerSave(SurveyAnswer a)
         {
             surveyAnswerGenericRepo.SAdd(a);
-            int nextPage = surveyQuestionGenericRepo.SGetListAll().ToPagedList().PageNumber + 1; // Sayfa numarasını bir artırarak bir sonraki soruya geçin
-            return Ok(new { NextPage = nextPage }); //yeni page numarası ApiGatewaye gönderilerek listsurveye aktarılır.
+            return Ok();
         }
 
     }

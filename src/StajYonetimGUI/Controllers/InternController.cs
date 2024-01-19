@@ -69,7 +69,7 @@ namespace StajYonetimGUI.Controllers
             }
         }
 
-        public async Task<IActionResult> UserDeleteAsync(int id)
+        public async Task<IActionResult> InternDeleteAsync(int id)
         {
             var userResponse = await _httpClient.DeleteAsync($"/Intern/InternDelete/{id}");
 

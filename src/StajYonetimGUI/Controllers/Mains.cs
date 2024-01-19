@@ -2,7 +2,7 @@
 
 namespace StajYonetimGUI.Controllers
 {
-    public class Main : Controller
+    public class Mains : Controller
     {
         public IActionResult PerosnalMain()
         {

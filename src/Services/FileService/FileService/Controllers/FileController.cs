@@ -338,6 +338,8 @@ namespace FileService.Api.Controllers
             return Ok(new FileResponseModel { Bytes = System.IO.File.ReadAllBytes(filePath), FileName = file.FileName + fileExtension });
 
         }
+
+
     }
 }
 

@@ -25,14 +25,6 @@ namespace InternService.Api.Controllers
             internStatusGenericRepo = new CrudGenericRepository<InternStatus>(dbContext);
         }
 
-        // Staj Kaydı Oluşturma ekranına erişme metodu(get)
-        [HttpGet("CreateIntern")]
-        public IActionResult CreateIntern()
-        {
-
-            return Ok();
-        }
-
         // Staj Kaydı Oluşturma ekranınında staj bilgilerinin gönderilmesi metodu(post)
         [HttpPost("CreateIntern")]
         public IActionResult CreateIntern(InternInfo i)
@@ -75,15 +67,15 @@ namespace InternService.Api.Controllers
         }
 
         //Staj kaydı silinecekse
-        [HttpDelete("InternDel{id}")]
-        public IActionResult InternDel(int id)
+        [HttpDelete("InternDelete{id}")]
+        public IActionResult InternDelete(int id)
         {
             var acceptValue = internStatusGenericRepo.INGetById(id).AcceptStatus;
             if (acceptValue != null && acceptValue == false)
             {
                 var intern = internGenericRepo.INGetById(id);
                 internGenericRepo.INDelete(intern);
-                return Ok(new { Message = "Staj kaydı silindi." });
+                return Ok(new { InterId = intern.ID, Message = "Staj kaydı silindi." });
             }
             else
             {
@@ -101,7 +93,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetConfirm(internship);
-                return Ok(new { Message = "Staj kaydı onaylandı." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı onaylandı." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -116,7 +108,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetConfirmDecline(internship);
-                return Ok(new { Message = "Staj kaydı onayı geri alındı." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı onayı geri alındı." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -131,7 +123,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetAccept(internship, acceptDays);
-                return Ok(new { Message = "Staj kaydı kabul edildi." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı kabul edildi." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -146,7 +138,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetAcceptDecline(internship);
-                return Ok(new { Message = "Staj kaydı kabulu geri alındı." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı kabulu geri alındı." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -161,7 +153,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetReject(internship, rejectReason);
-                return Ok(new { Message = "Staj Reddedildi." });
+                return Ok(new { InterId = internship.ID, Message = "Staj Reddedildi." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -176,7 +168,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetContributConfirm(internship);
-                return Ok(new { Message = "Staj kaydı katkı payı onaylandı." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı katkı payı onaylandı." });
             }
 
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
@@ -191,7 +183,7 @@ namespace InternService.Api.Controllers
             if (internship != null)
             {
                 internStatusGenericRepo.INGetContributDecline(internship);
-                return Ok(new { Message = "Staj kaydı katkı payı onayı geri alındı." });
+                return Ok(new { InterId = internship.ID, Message = "Staj kaydı katkı payı onayı geri alındı." });
             }
             return BadRequest(new { Message = "Staj kaydı bulunamadı." });
         }

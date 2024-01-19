@@ -60,8 +60,8 @@ namespace UserService.Api.Controllers
         }
 
         // Kullanıcıların Silinmesi
-        [HttpDelete("UserDel/{id}")]
-        public IActionResult UserDel(int id)
+        [HttpDelete("UserDelete/{id}")]
+        public IActionResult UserDelete(int id)
         {
             var user = _userGenericRepo.UGetById(id);
             _userGenericRepo.UDelete(user);

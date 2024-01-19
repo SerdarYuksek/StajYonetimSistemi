@@ -91,7 +91,7 @@ namespace UserService.Api.Controllers
 
         //Kullanıcı giriş ekranını getirme
         [HttpGet("UserSignIn")]
-        public IActionResult UserSıgnIn()
+        public IActionResult UserSignIn()
         {
             return Ok(new { Message = "Giriş sayfası ekrana geldi" });
         }
